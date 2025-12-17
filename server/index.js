@@ -10,4 +10,4 @@ app.use(express.urlencoded());
 
 app.listen(port, () => {
     console.log(`App is listening on port http://localhost:${port}`);
-})
+});

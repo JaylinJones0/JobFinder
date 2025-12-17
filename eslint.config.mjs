@@ -4,6 +4,16 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig([
   { files: ["**/*.js"], languageOptions: { sourceType: "commonjs" } },
-  { files: ["**/*.{js,mjs,cjs,jsx}"], languageOptions: { globals: globals.browser } },
+  {
+    files: ["**/*.{js,mjs,cjs,jsx}"],
+    languageOptions: { globals: globals.browser },
+  },
   pluginReact.configs.flat.recommended,
+  {
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+  },
 ]);
