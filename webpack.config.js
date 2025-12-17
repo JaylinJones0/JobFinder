@@ -2,7 +2,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 
 module.exports = {
-  mode: 'development',
+  mode: "development",
   entry: path.resolve(__dirname, "./client/index.jsx"),
   output: {
     filename: "bundle.js",
@@ -18,22 +18,17 @@ module.exports = {
           options: {
             targets: "defaults",
             presets: [
-              [
-                "@babel/preset-env",
-                [
-                  "babel/preset-react", // issue here
-                  {
-                    runtime: "automatic",
-                  },
-                ],
-              ],
+              ["@babel/preset-env"],
+              ["@babel/preset-react", { runtime: "automatic" }],
             ],
           },
         },
       },
     ],
   },
-  plugins: [new HtmlWebpackPlugin({
-    template: './client/index.html'
-  })]
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "./client/index.html",
+    }),
+  ],
 };
