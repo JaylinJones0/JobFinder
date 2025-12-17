@@ -1,7 +1,10 @@
 import React from 'react';
+import FindJobs from './FindJobs.jsx';
 
-function App() {
-    return <div>Hello World</div>;
+export default function App() {
+    
+    return (
+        <FindJobs />
+    );
 }
 
-export default App;
