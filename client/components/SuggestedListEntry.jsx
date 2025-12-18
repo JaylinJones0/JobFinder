@@ -4,8 +4,9 @@ export default function SuggestedListEntry({ name, link, description }) {
   return (
     <div>
         <p>Job Title: {name}</p>
-        <a href='url'>{link}</a>
-        <p>Description: {description}</p>
+        <a href={link} target="_blank" rel="noopner noreferrer">Click here to apply directly</a>
+        {/* Descriptions end in... will need let client know to go to job posting for full description*/}
+        <p>Description: {description}</p> 
     </div>
   );
 }
