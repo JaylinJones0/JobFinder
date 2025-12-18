@@ -1,9 +1,11 @@
 import React from 'react';
-import SuggestedJobList from './SuggestedJobList';
+import SuggestedJobList from './SuggestedJobList.jsx';
 
-export default function FindJobs() {
+export default function FindJobs({ jobs }) {
 
     return (
-        <SuggestedJobList />
+        <SuggestedJobList jobs={jobs}/>
     );
+
 }
+

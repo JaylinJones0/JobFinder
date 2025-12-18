@@ -2,9 +2,9 @@ import React from 'react';
 
 import SuggestedListEntry from './SuggestedListEntry.jsx';
 
-export default function SuggestedJobList() {
+export default function SuggestedJobList({ jobs }) {
 
     return (
-        <div>placeholder</div>
+        <SuggestedListEntry jobs={jobs}/>
     )
 }

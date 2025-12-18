@@ -43,7 +43,6 @@ app.get("/findjobs{/:category}", (req, res) => {
   const results_per_page = 8;
   // if category parameter is not defined send client default job listings
   if (!category) {
-    console.log(app_key);
     axios
       .get("http://api.adzuna.com/v1/api/jobs/us/search/1", {
         params: {
