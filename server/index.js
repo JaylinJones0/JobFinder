@@ -74,11 +74,17 @@ app.get('/api/reported-links', (req, res) => {
   })
 })
 
+// This endpoint may be kind of unnessecery, but we can remove it if it ends up being useless by the client.
 // Endpoint for reading a the number of users who have reported a specific link.
   // Used by the client to see if enough users have reported it.
   // Also used by the client to display how many users have reported a link
 app.get('/api/reported-links/count', (req, res) => {
-  res.sendStatus(501)
+  ReportedUrl.find({}).then((urls) => {
+    res.status(200).send(urls.length);
+  }).catch((err) => {
+    console.error('Failed to find reported URLs: ', err);
+    res.sendStatus(500);
+  })
 })
 
 // Endpoint for reading a specific reported link.
