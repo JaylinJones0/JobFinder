@@ -116,9 +116,9 @@ app.patch('/api/reported-links', (req, res) => {
     if (url[0].usersReported.includes(req.body.user)) { // if the user has already reported this site...
       res.sendStatus(409); // there is a conflict! State as such.
     } else { // if they have not...
-      const updatedUsers = url.usersReported;
+      const updatedUsers = url[0].usersReported;
       updatedUsers.push(req.body.user); // create a new version of the array with the user added
-      return ReportedUrl.updateOne({_id: url._id}, {usersReported: updatedUsers}).then(() => { // change the array to include the user!
+      return ReportedUrl.updateOne({_id: url[0]._id}, {usersReported: updatedUsers}).then(() => { // change the array to include the user!
         res.sendStatus(200);
       })
     }
