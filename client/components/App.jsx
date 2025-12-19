@@ -31,6 +31,7 @@ export default function App() {
         }
       })
       .catch((err) => {
+        
         console.error("Failed to GET jobs from endpoint", err);
       });
 
