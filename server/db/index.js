@@ -17,7 +17,11 @@ const Preference = mongoose.model("Preference", preferenceSchema);
 
 // Suggested Preference (by user)
 const suggestedPreferenceSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    minLength: 2,
+    maxLength: 50,
+  }
 })
 
 const SuggestedPreference = mongoose.model("SuggestedPreference", suggestedPreferenceSchema)

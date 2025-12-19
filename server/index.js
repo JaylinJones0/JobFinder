@@ -13,6 +13,7 @@ const {
   User,
   ReportedUrl,
 } = require("./db/index.js");
+const { error } = require("console");
 
 //init app
 const app = express();
@@ -32,8 +33,8 @@ app.get('/signin', (req, res) => {
 
 //when someone visits this link they should be authenticated w/ google.
 app.get('/auth/google',
-  passport.authenticate('google', {scope: ['email', 'profile']})
-  
+  passport.authenticate('google', { scope: ['email', 'profile'] })
+
 )
 
 //Protected route (User can't visit this route unless logged in w/ google)
@@ -51,23 +52,23 @@ app.get("/api/findjobs{/:category}", (req, res) => {
   const results_per_page = 50
   // if category parameter is not defined send client default job listings
   axios
-  .get("http://api.adzuna.com/v1/api/jobs/us/search/1", {
-    params: {
-      app_id,
-      app_key,
-      results_per_page,
-      category: category || "",
-    },
-  })
-  .then((jobs) => {
-    const jobsArray = jobs.data.results;
-    res.status(200).send(jobsArray);
-  })
-  .catch((err) => {
-    res.sendStatus(500);
-    console.error("Failed to GET jobs", err);
-  });
-  
+    .get("http://api.adzuna.com/v1/api/jobs/us/search/1", {
+      params: {
+        app_id,
+        app_key,
+        results_per_page,
+        category: category || "",
+      },
+    })
+    .then((jobs) => {
+      const jobsArray = jobs.data.results;
+      res.status(200).send(jobsArray);
+    })
+    .catch((err) => {
+      res.sendStatus(500);
+      console.error("Failed to GET jobs", err);
+    });
+
 });
 
 // route allows client to input suggested preferences to database for admin review
@@ -76,13 +77,28 @@ app.post("/api/findjobs", (req, res) => {
   SuggestedPreference.create({
     name,
   })
-  .then(() => {
-    res.status(201).send("Preference Suggestion Received. \n Awaiting Administrative Review");
-  })
-  .catch(err => {
-    console.error(err);
-    res.sendStatus(500);
-  }) 
+    .then(() => {
+      res.status(201).send("Preference Suggestion Received. \n Awaiting Administrative Review");
+    })
+    .catch(err => {
+      console.error(err);
+      // want to make a custom error message if input fails to save to database
+      // so that i can use the error type for the client side
+      if (err.name === "ValidationError") {
+        let errorsObj = {};
+        // make err object's "errors" property
+        // (which is an object) into an array
+        // of error type keys to use for output "errorsObj"
+        Object.keys(err.errors).forEach(key => {
+          errorsObj[key] = err.errors[key].kind
+        });
+        // send custom error obj to client for 
+        // further custom error handling logic
+        return res.status(400).send(errorsObj)
+      }
+      // MISC error handling
+      res.status(500).send("Something Went Wrong")
+    })
 });
 
 
@@ -142,7 +158,7 @@ app.patch('/api/reported-links', (req, res) => {
     } else { // if they have not...
       const updatedUsers = url[0].usersReported;
       updatedUsers.push(req.body.user); // create a new version of the array with the user added
-      return ReportedUrl.updateOne({_id: url[0]._id}, {usersReported: updatedUsers}).then(() => { // change the array to include the user!
+      return ReportedUrl.updateOne({ _id: url[0]._id }, { usersReported: updatedUsers }).then(() => { // change the array to include the user!
         res.sendStatus(200);
       })
     }
