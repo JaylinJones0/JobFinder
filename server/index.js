@@ -72,7 +72,17 @@ app.get("/api/findjobs{/:category}", (req, res) => {
 
 // route allows client to input suggested preferences to database for admin review
 app.post("/api/findjobs", (req, res) => {
-
+  const { name } = req.body
+  SuggestedPreference.create({
+    name,
+  })
+  .then(() => {
+    res.status(201).send("Preference Suggestion Received. \n Awaiting Administrative Review");
+  })
+  .catch(err => {
+    console.error(err);
+    res.sendStatus(500);
+  }) 
 });
 
 
