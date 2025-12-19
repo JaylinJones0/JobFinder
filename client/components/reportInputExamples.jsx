@@ -31,20 +31,78 @@ import axios from "axios";
   // button is grayed out and unclickable, but this means that it has to check for the link every time by default.
 
 export default function reportInputExamples() {
-  const [stateName, setStateFunction] = useState([]);
+  // const [stateName, setStateFunction] = useState([]);
 
-  const getData = (category) => {
-    axios
-      .get(/* url */)
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => {
+  const [warnMessage, setWarnMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(false);
+
+  // use this to compare links with the database. returns the then-able promise.
+  const getReportedLink = (url) => {
+    return axios.get('/api/reported-links', url ? {params: {link: url}} : {}).catch((err) => {
         console.error("template failure message: ", err);
       });
   };
 
+  // use this to create a new report if no one has ever reported the link.
+  const postReport = (url, userID) => {
+    axios.post('/api/reported-links').catch((err) => {
+        console.error("template failure message: ", err);
+      });
+  };
+  
+  // use this to add a userID to a prexisting report.
+  // in the future, it should always just use the currently logged in user, rather than needing a userID passed in.
+  const patchReport = (url, userID) => {
+    axios.patch('/api/reported-links').catch((err) => {
+        console.error("template failure message: ", err);
+      });
+  };
+
+  // checks if the url provided has been reported...
+  // displays warning if it has.
+  const handleClickOffInput = () => {
+
+  }
+
+  // first, it checks if the link has ever been reported...
+  // if it has...
+    // has the user already reported it?
+    // if so...
+      // display a message saying that they have already reported this link.
+    // if not...
+      // make a PATCH request, and send the current userID and related link. 
+      // (for this example, the link will always be example.com, but really it would be attatched to the job that the report button is attatched to.)
+      // once the request is complete, display the success message.
+  // if it has not...
+    // make a POST request to post the new report.
+    // once the post request has gone through, display the success message.
+  const handleReportSubmission = (reportedUrl) => {
+    getReportedLink(reportedUrl).then((urlArr) => {
+      if (urlArr.length === 0) {
+        if (urlArr[0].usersReported.includes("fakeID-Client")) {
+          setWarnMessage(true);
+        } else {
+          patchReport("example.com", "fakeID-Client").then(() => {
+            setSuccessMessage(true);
+          })
+        }
+      } else {
+        postReport("example.com", "fakeID-Client").then(() => {
+          setSuccessMessage(true);
+        })
+      }
+    })
+  }
+
   return (<div>
-    <p>placeholder</p>
+    {/* <input 
+      type="text"
+      placeholder="Your jobs link, or location..."
+    /> */}
+    <button 
+    onClick={(event) => {handleReportSubmission('example.com')}}
+    >Report Job</button>
+    {warnMessage ? <p id="report-warning-alreadysent">You have already reported this link. Another report was not sent.</p> : <></>}
+    {successMessage ? <p id="report-confirm">Thanks you for you input! We have saved your report.</p> : <></>}
   </div>)
 }
