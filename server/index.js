@@ -78,7 +78,7 @@ app.post("/api/findjobs", (req, res) => {
     name,
   })
     .then(() => {
-      res.status(201).send("Preference Suggestion Received. \n Awaiting Administrative Review");
+      res.sendStatus(201);
     })
     .catch(err => {
       console.error(err);

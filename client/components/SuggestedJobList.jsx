@@ -2,6 +2,8 @@ import React from "react";
 import { useState, useEffect, useEffectEvent } from "react";
 import SuggestedListEntry from "./SuggestedListEntry.jsx";
 
+import axios from "axios";
+
 /* 
   EXPLANATION OF useEffectEvent:
   Was used to prevent stale closure issue
@@ -15,7 +17,9 @@ import SuggestedListEntry from "./SuggestedListEntry.jsx";
 
 export default function SuggestedJobList({ jobs, getJobListings }) {
   const [selectedPrefs, setSelectedPrefs] = useState(new Set());
-  let [limit, setLimit] = useState(5);
+  let [limit, setLimit] = useState(4);
+  const [suggestionResponse, setSuggestionResponse] = useState("");
+  const [suggestionInputValue, setSuggestionInputValue] = useState("");
 
   // executes logic on initial render & every time a change is made to selectedPrefs
   useEffect(() => {
@@ -26,6 +30,23 @@ export default function SuggestedJobList({ jobs, getJobListings }) {
     // attempted every render, used to render preference specific jobs from API
     getJobListingsEvent();
   }, [selectedPrefs]);
+
+  // handles suggestion success/fail message visibility
+  // should disappear after 5 seconds
+  useEffect(() => {
+    // 5 second timer after a value is
+    // given to suggestionResponse state
+    const visibilityTimer = setTimeout(() => {
+      setSuggestionResponse("");
+    }, 5000);
+
+    // cleanup function that cancels timer if
+    // component is unmounted before the timer finishes
+    // prevents memory leak
+    return () => {
+      clearTimeout(visibilityTimer);
+    };
+  }, [suggestionResponse]);
 
   // an Event for getJobListings to prevent stale closures
   const getDefaultJobListingsEvent = useEffectEvent(() => {
@@ -66,6 +87,51 @@ export default function SuggestedJobList({ jobs, getJobListings }) {
     });
   };
 
+  // track suggestion input field's value
+  // going to be used to get the length
+  // to render character count
+  const handleInputChange = (e) => {
+    setSuggestionInputValue(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    // Prevent browser from reloading page
+    e.preventDefault();
+
+    // Read form data
+    const form = e.target;
+    const formData = new FormData(form);
+    console.log(formData);
+
+    // passing formData directly into POST request
+    axios
+      .post("/api/findjobs", {
+        name: formData.get("suggestion-input"),
+      })
+      // if successful suggestionResponse state with String
+      .then(() => {
+        setSuggestionResponse("Sent! Awaiting Approval.");
+      })
+      // if fail
+      .catch((err) => {
+        console.log(err.response.data.name);
+        const errorName = err.response.data.name;
+        if (errorName === "minlength") {
+          setSuggestionResponse(
+            "Failed to Send! Minimum Characters Required: 2"
+          );
+        } else if (errorName === "maxlength") {
+          setSuggestionResponse(
+            "Failed to Send! Maximum Characters Allowed: 50"
+          );
+        } else {
+          // all other errors
+          console.error(err);
+          setSuggestionResponse(`Failed to Send! Error Code: ${err.status}`);
+        }
+      });
+  };
+
   // method used to render 5 more
   // jobs listings to the page
   const renderMoreJobs = () => {
@@ -87,12 +153,13 @@ export default function SuggestedJobList({ jobs, getJobListings }) {
       <h1>Find Jobs</h1>
       <h2>Choose your job preferences</h2>
       <div
-        className="job-category-checkboxes"
+        className="job-preferences-checkboxes"
         style={{ display: "flex", gap: "10px" }}
       >
         <div>
-          <label>
+          <label htmlFor="it-jobs">
             <input
+              id="it-jobs"
               type="checkbox"
               name="it-jobs"
               checked={selectedPrefs.has("it-jobs")}
@@ -102,8 +169,9 @@ export default function SuggestedJobList({ jobs, getJobListings }) {
           </label>
         </div>
         <div>
-          <label>
+          <label htmlFor="customer-services-jobs">
             <input
+              id="customer-services-jobs"
               type="checkbox"
               name="customer-services-jobs"
               checked={selectedPrefs.has("customer-services-jobs")}
@@ -113,8 +181,9 @@ export default function SuggestedJobList({ jobs, getJobListings }) {
           </label>
         </div>
         <div>
-          <label>
+          <label htmlFor="engineering-jobs">
             <input
+              id="engineering-jobs"
               type="checkbox"
               name="engineering-jobs"
               checked={selectedPrefs.has("engineering-jobs")}
@@ -124,11 +193,34 @@ export default function SuggestedJobList({ jobs, getJobListings }) {
           </label>
         </div>
       </div>
+      <div>
+        <h3>
+          Don&apos;t see a preference that matches you?
+          <br />
+          Suggest More Here:
+        </h3>
+        <div>
+          <form method="post" onSubmit={handleSubmit}>
+            <label>
+              <input
+                name="suggestion-input"
+                type="text"
+                onChange={handleInputChange}
+                required={true}
+              ></input>
+            </label>
+            <button type="submit">Send Preference</button>&nbsp;
+            {suggestionResponse}
+          </form>
+          Character Count: {suggestionInputValue.length}
+          <br />
+        </div>
+      </div>
       <div
         className="job-list"
         style={{
           display: "flex",
-          height: "700px",
+          height: "560px",
           width: "100%",
           border: "2px solid black",
           overflow: "auto",
@@ -142,6 +234,7 @@ export default function SuggestedJobList({ jobs, getJobListings }) {
                 link={job.redirect_url}
                 description={job.description}
                 key={job.id}
+                jobs={jobs}
               />
             );
           })}
