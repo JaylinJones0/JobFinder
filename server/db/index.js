@@ -28,8 +28,20 @@ const SuggestedPreference = mongoose.model("SuggestedPreference", suggestedPrefe
 
 // User
 const userSchema = new mongoose.Schema({
-  username: String,
-  email: String,
+  googleId: {
+    type: String,
+    required: true
+  },
+
+  displayName: {
+    type: String,
+    required: true
+  },
+
+  image: {
+    type: String
+  },
+
   jobs: [],
   preferences: [],
 });

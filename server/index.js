@@ -1,12 +1,15 @@
 const express = require("express");
+const session = require("express-session")
 const passport = require("passport")
 const axios = require("axios");
-
-
-const dotenv = require("dotenv/config");
-const { app_id, app_key } = process.env;
-
 const path = require("path");
+const dotenv = require("dotenv/config");
+
+require('./auth.js')
+
+const { app_id, app_key } = process.env;
+const { secret } = process.env;
+
 const {
   Preference,
   SuggestedPreference,
@@ -15,14 +18,38 @@ const {
 } = require("./db/index.js");
 const { error } = require("console");
 
+
 //init app
 const app = express();
 const port = 3000;
 
+
+
+//check if the user is already logged in
+function isLoggedIn (req, res, next){
+  //check if req has a user
+  //if it does, move to next middleware fn
+  //if not return 401 (unauthorized)
+  req.user ? next() : res.sendStatus(401)
+
+}
+
 //MIDDLEWARE:
 app.use(express.static(path.resolve(__dirname, "../dist")));
 app.use(express.json());
+
+app.use(session({
+  secret: secret,
+  resave: false, //don't save session if nothing is modified
+  saveUninitialized: false //don't create session until something is stored
+})) //need to define deprecated points
+
+app.use(passport.initialize());
 app.use(express.urlencoded());
+app.use(passport.session());
+
+
+
 
 //ROUTES:
 
@@ -33,14 +60,36 @@ app.get('/signin', (req, res) => {
 
 //when someone visits this link they should be authenticated w/ google.
 app.get('/auth/google',
-  passport.authenticate('google', { scope: ['email', 'profile'] })
-
+  passport.authenticate('google', { scope: ['profile']})//scope of what ever is included in the profile
 )
+
+//when someone is authenticated and signs in
+app.get('/google/callback',
+  passport.authenticate('google', {
+    //the url we bring the user to if they are successfully authenticated.
+    successRedirect: '/protected',
+    //if not successful
+    failureRedirect: '/auth/failure'
+  })
+)
+
+//define endpoint for failureRedirect
+app.get('/auth/failure', (req, res) => {
+  res.send("Something didn't go as planned, please check credentials")
+});
 
 //Protected route (User can't visit this route unless logged in w/ google)
 //When a user is logged in we will have access to their details
-app.get("/protected", (req, res) => {
-  res.send("Hello");
+app.get("/protected", isLoggedIn, (req, res) => {
+  res.send(`Hello ${req.user.displayName}`);//explore what other info from the req I can use
+});
+
+//Logout route
+app.get('/logout', (req, res) => {
+  req.logout();
+  //destroy current session
+  req.session.destroy();
+  res.send('You are logged out').redirect('/signin')
 });
 
 // Preferences API Routes:
