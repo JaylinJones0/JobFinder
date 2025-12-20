@@ -149,8 +149,9 @@ app.post("/api/findjobs", (req, res) => {
 // // endpoint allows user to update preferences and save new preference options in the database (WIP)
 app.patch("/api/update-preferences", (req, res) => {});
 
-// endpoint for admins to delete from list of approved
-// to see list of current preferences stored in database send DELETE request without an ID parameter specified
+// endpoint for admins to delete from list of approved preferences via Postman
+// to see list of current preferences stored in database: send DELETE request to /api/delete-preferences (no id)
+// to delete a preference stored in database: send DELETE request with id specified. Example: http://localhost:3000/api/delete-preferences/(id goes here)"
 app.delete("/api/delete-preferences{/:id}", async (req, res) => {
   const { id } = req.params;
   // should retrieve current list of approved preferences from database
