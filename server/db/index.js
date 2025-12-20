@@ -8,29 +8,23 @@ async function main() {
   await mongoose.connect("mongodb://127.0.0.1:27017/jobfinder");
 }
 
-// Interest
-const interestSchema = new mongoose.Schema({
+// Preference
+const preferenceSchema = new mongoose.Schema({
   name: String,
 });
 
-const Interest = mongoose.model("Interest", interestSchema);
+const Preference = mongoose.model("Preference", preferenceSchema);
 
-// Skill
-const skillSchema = new mongoose.Schema({
-  name: String,
-});
+// Suggested Preference (by user)
+const suggestedPreferenceSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    minLength: 2,
+    maxLength: 50,
+  }
+})
 
-const Skill = mongoose.model("Skill", skillSchema);
-
-// ExperienceLevel
-const experienceLevelSchema = new mongoose.Schema({
-  name: String,
-});
-
-const ExperienceLevel = mongoose.model(
-  "ExperienceLevel",
-  experienceLevelSchema
-);
+const SuggestedPreference = mongoose.model("SuggestedPreference", suggestedPreferenceSchema)
 
 // User
 const userSchema = new mongoose.Schema({
@@ -63,9 +57,8 @@ const reportedUrlSchema = new mongoose.Schema({
 const ReportedUrl = mongoose.model("ReportedUrl", reportedUrlSchema);
 
 module.exports = {
-  Interest,
-  Skill,
-  ExperienceLevel,
+  Preference,
+  SuggestedPreference,
   User,
   ReportedUrl,
 };

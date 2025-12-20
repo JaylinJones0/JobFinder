@@ -4,18 +4,19 @@ const passport = require("passport")
 const axios = require("axios");
 const path = require("path");
 const dotenv = require("dotenv/config");
+
 require('./auth.js')
 
 const { app_id, app_key } = process.env;
 const { secret } = process.env;
 
 const {
-  Interest,
-  Skill,
-  ExperienceLevel,
+  Preference,
+  SuggestedPreference,
   User,
   ReportedUrl,
 } = require("./db/index.js");
+const { error } = require("console");
 
 
 //init app
@@ -91,9 +92,11 @@ app.get('/logout', (req, res) => {
   res.send('You are logged out').redirect('/signin')
 });
 
+// Preferences API Routes:
+
 // route to allow client to make GET request using /findjobs/:category endpoint
 // will send back default job list for now
-app.get("/findjobs{/:category}", (req, res) => {
+app.get("/api/findjobs{/:category}", (req, res) => {
   const { category } = req.params;
   const results_per_page = 50
   // if category parameter is not defined send client default job listings
@@ -116,6 +119,37 @@ app.get("/findjobs{/:category}", (req, res) => {
     });
 
 });
+
+// route allows client to input suggested preferences to database for admin review
+app.post("/api/findjobs", (req, res) => {
+  const { name } = req.body
+  SuggestedPreference.create({
+    name,
+  })
+    .then(() => {
+      res.sendStatus(201);
+    })
+    .catch(err => {
+      console.error(err);
+      // want to make a custom error message if input fails to save to database
+      // so that i can use the error type for the client side
+      if (err.name === "ValidationError") {
+        let errorsObj = {};
+        // make err object's "errors" property
+        // (which is an object) into an array
+        // of error type keys to use for output "errorsObj"
+        Object.keys(err.errors).forEach(key => {
+          errorsObj[key] = err.errors[key].kind
+        });
+        // send custom error obj to client for 
+        // further custom error handling logic
+        return res.status(400).send(errorsObj)
+      }
+      // MISC error handling
+      res.status(500).send("Something Went Wrong")
+    })
+});
+
 
 // REPORTING:
 
@@ -173,7 +207,7 @@ app.patch('/api/reported-links', (req, res) => {
     } else { // if they have not...
       const updatedUsers = url[0].usersReported;
       updatedUsers.push(req.body.user); // create a new version of the array with the user added
-      return ReportedUrl.updateOne({_id: url[0]._id}, {usersReported: updatedUsers}).then(() => { // change the array to include the user!
+      return ReportedUrl.updateOne({ _id: url[0]._id }, { usersReported: updatedUsers }).then(() => { // change the array to include the user!
         res.sendStatus(200);
       })
     }
@@ -195,6 +229,10 @@ app.delete('/api/reported-links', (req, res) => {
   })
 })
 
+// catch all route to allow react router to take control of routing
+app.get('/*any', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../dist', 'index.html'))
+});
 
 // Start the Server. All endpoints should go above this.
 app.listen(port, () => {
