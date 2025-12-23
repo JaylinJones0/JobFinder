@@ -48,11 +48,6 @@ app.use(passport.session());
 
 //ROUTES:
 
-// //Base sign in route, link for user to click to sign in w/ google
-// app.get('/signin', (req, res) => {
-//   res.send('<a href="/auth/google">Authenticate w/ Google</a>');
-// });
-
 //when someone visits this link they should be authenticated w/ google.
 app.get('/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email']})//scope of what ever is included in the profile
