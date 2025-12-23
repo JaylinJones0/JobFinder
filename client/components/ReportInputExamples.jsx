@@ -30,7 +30,7 @@ import axios from "axios";
 // ideas: error message like the success feedback.
 // button is grayed out and unclickable, but this means that it has to check for the link every time by default.
 
-export default function reportInputExamples() {
+export default function ReportInputExamples() {
   // const [stateName, setStateFunction] = useState([]);
 
   const [reportCount, setReportCount] = useState(0); // in theory, this state would be attatched per job.
@@ -53,7 +53,7 @@ export default function reportInputExamples() {
   // use this to create a new report if no one has ever reported the link.
   // in the future, it should always just use the currently logged in user, rather than needing a userID passed in.
   const postReport = (url, userID) => {
-    axios
+    return axios
       .post("/api/reported-links", {
         report: {
           url,
@@ -68,7 +68,7 @@ export default function reportInputExamples() {
   // use this to add a userID to a prexisting report.
   // in the future, it should always just use the currently logged in user, rather than needing a userID passed in.
   const patchReport = (url, userID) => {
-    axios
+    return axios
       .patch("/api/reported-links", {
         user: userID,
         link: url,
@@ -93,10 +93,12 @@ export default function reportInputExamples() {
   // if it has not, it doesn't need to do a thing!
   
   const handleClickOffInput = (inputValue) => {
-    getReportedLink(inputValue).then((urlArr) => {
-      if(urlArr.length > 0) {
-        if (urlArr[0].usersReported.length >= 3) {
-          setReportCount(urlArr[0].usersReported.length);
+    console.log(`checking to see if ${inputValue} exists`);
+    getReportedLink(inputValue).then((reportObj) => {
+      console.log("click off: urls found ", reportObj.data)
+      if(reportObj.data) {
+        if (reportObj.data.usersReported.length >= 3) {
+          setReportCount(reportObj.data.usersReported.length);
           setReportWarning(true);
         }
       }
@@ -104,11 +106,14 @@ export default function reportInputExamples() {
   };
 
   const handleReportSubmission = (reportedUrl) => {
+    console.log("handling report for ", reportedUrl);
+
     // first, it checks if the link has ever been reported...
-    getReportedLink(reportedUrl).then((urlArr) => {
-      if (urlArr.length === 0) {
+    getReportedLink(reportedUrl).then((reportObj) => {
+      console.log("report submit: urls found", reportObj.data)
+      if (reportObj.data) {
         // if it has...
-        if (urlArr[0].usersReported.includes("fakeID-Client")) {
+        if (reportObj.data.usersReported.includes("fakeID-Client")) {
           // has the user already reported it?
           // if so, display a message saying that they have already reported this link.
           setWarnMessage(true);
