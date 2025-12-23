@@ -94,7 +94,7 @@ export default function ReportInputExamples() {
   
   const handleClickOffInput = (inputValue) => {
     getReportedLink(inputValue).then((reportObj) => {
-      if(reportObj.data) {
+      if(reportObj) {
         if (reportObj.data.usersReported.length >= 3) {
           setReportCount(reportObj.data.usersReported.length);
           setReportWarning(true);
@@ -107,7 +107,7 @@ export default function ReportInputExamples() {
 
     // first, it checks if the link has ever been reported...
     getReportedLink(reportedUrl).then((reportObj) => {
-      if (reportObj.data) {
+      if (reportObj) {
         // if it has...
         if (reportObj.data.usersReported.includes("fakeID-Client")) {
           // has the user already reported it?
@@ -134,42 +134,50 @@ export default function ReportInputExamples() {
   };
 
   return (
+    // the warnings aren't nessecerily exactly as I imagine them to look, but they get across the idea of notifying the user that we have their input.
+
     <div>
-      <input
-        type="text"
-        placeholder="Your jobs link, or location..."
-        onBlur={(event) => {
-          handleClickOffInput(event.target.value);
-        }}
-      />
-      {reportWarning ? (
-        <p id="report-warning-info">
-          Are you sure you want to add this job? {reportCount} users have reported this job listing as fraudulent.
-        </p>
-      ) : (
-        <></>
-      )}
-      <button
-        onClick={(event) => {
-          handleReportSubmission("example.com");
-        }}
-      >
-        Report Job
-      </button>
-      {warnMessage ? (
-        <p id="report-warning-alreadysent">
-          You have already reported this link. Another report was not sent.
-        </p>
-      ) : (
-        <></>
-      )}
-      {successMessage ? (
-        <p id="report-confirm">
-          Thanks you for you input! We have saved your report.
-        </p>
-      ) : (
-        <></>
-      )}
+      <div id="jobInputReportingExample">
+        <p>Example of a job-input. Will give a warning if you have 3 userIDs stored in the report associated with the inputed link.</p>
+        <input
+          type="text"
+          placeholder="Your jobs link, or location..."
+          onBlur={(event) => {
+            handleClickOffInput(event.target.value);
+          }}
+        />
+        {reportWarning ? (
+          <p id="report-warning-info">
+            Are you sure you want to add this job? {reportCount} users have reported this job listing as fraudulent.
+          </p>
+        ) : (
+          <></>
+        )}
+      </div>
+      <div id="ReportButtonExample">
+        <p>{'Example of a report button, which would be attatched to a jobListEntry. For the example, the userID is always "fakeID-Client". It always sends a report for "example.com".'}</p>
+        <button
+          onClick={(event) => {
+            handleReportSubmission("example.com");
+          }}
+        >
+          Report Job
+        </button>
+        {warnMessage ? (
+          <p id="report-warning-alreadysent">
+            You have already reported this link. Another report was not sent.
+          </p>
+        ) : (
+          <></>
+        )}
+        {successMessage ? (
+          <p id="report-confirm">
+            Thanks you for you input! We have saved your report.
+          </p>
+        ) : (
+          <></>
+        )}
+      </div>
     </div>
   );
 }
