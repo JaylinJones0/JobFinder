@@ -46,13 +46,19 @@ passport.use(new GoogleStrategy({
 
 
 passport.serializeUser((user, cb) => {
+  console.log('serialize user:',user)
   cb(null, user.id);//only store user id
 
 });
 
-passport.deserializeUser((user, cb) => {
+passport.deserializeUser(async (id, cb) => {
 
+try {
+  const user = await User.findById(id)
   cb(null, user);
+} catch (err) {
+  cb(err)
+}
 
-})
+});
 

@@ -1,10 +1,11 @@
 import React from "react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Routes, Route } from "react-router";
 import axios from "axios";
 
 import Home from "./Home.jsx";
 import SignIn from "./SignIn.jsx";
+import Profile from "./Profile.jsx";
 import FindJobs from "./FindJobs.jsx";
 import DashBoard  from "./Dashboard.jsx";
 import NavBar from "./Navbar.jsx";
@@ -12,6 +13,26 @@ import NavBar from "./Navbar.jsx";
 export default function App() {
   const [jobResults, setJobResults] = useState([]);
   const countRef = useRef(0);
+  // if user is logged in
+  const [userInfo, setUserInfo] = useState(null)
+
+
+useEffect(() => {
+getUserInfo()
+}, [])
+
+
+
+  const getUserInfo = () => {
+    axios.get('/api/user-info')
+      .then(response => {
+        const userObj = response.data;
+        setUserInfo(userObj)
+      })
+      .catch(err => {
+        console.error(err)
+      });
+  }
 
   const getJobListings = (category, prefsArray) => {
     axios
@@ -71,6 +92,7 @@ export default function App() {
       <Route path="/" element={<Home />}></Route>
       <Route path="/signin" element={<SignIn />}></Route>
       <Route path="/dashboard" element={<DashBoard />}></Route>
+      <Route path='/profile' element={<Profile userInfo={userInfo} />}></Route>
 
       <Route
         path="/findjobs"

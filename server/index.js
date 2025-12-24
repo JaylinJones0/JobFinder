@@ -1,5 +1,7 @@
 const express = require("express");
 const session = require("express-session");
+const MongoStore = require('connect-mongo').default;
+const mongoose = require('mongoose')
 const passport = require("passport");
 const axios = require("axios");
 const path = require("path");
@@ -39,6 +41,10 @@ app.use(
     secret: secret,
     resave: false, //don't save session if nothing is modified
     saveUninitialized: false, //don't create session until something is stored
+    store: MongoStore.create({
+      client: mongoose.connection.getClient(),
+      collectionName: 'sessions'
+    })
   })
 ); //need to define deprecated points
 
@@ -72,7 +78,7 @@ app.get("/auth/failure", (req, res) => {
 //Protected route (User can't visit this route unless logged in w/ google)
 //When a user is logged in we will have access to their details
 app.get("/protected", isLoggedIn, (req, res) => {
-  res.send(`Hello ${req.user.displayName}`); //explore what other info from the req I can use
+  res.redirect('/profile'); //explore what other info from the req I can use
 });
 
 //Logout route
@@ -84,7 +90,31 @@ app.get("/logout", (req, res) => {
   res.redirect('/signin')
 });
 
+// General App Route:
+// used to grab user information (user Obj) from database if they are logged in.
+app.get('/api/user-info', isLoggedIn, (req, res) => {
+  // send user object when requested
+  res.send(req.user)
+})
+
+// used to grab current preferences
+app.get('/api/preferences', (req, res) => {
+  Preference.find()
+    .then(prefsObjs => {
+      // make an array of all the preference names that we've approved
+      const prefsArr = prefsObjs.map(prefObj => {
+        return prefObj.name
+      });
+      res.status(200).send(prefsArr)
+    })
+    .catch(err => {
+      console.error(err);
+      res.sendStatus(500)
+    })
+})
+
 // Preferences API Routes:
+
 
 // route to allow client to make GET request using /findjobs/:category endpoint
 // will send back default job list for now
@@ -142,7 +172,20 @@ app.post("/api/findjobs", (req, res) => {
 });
 
 // // endpoint allows user to update preferences and save new preference options in the database (WIP)
-app.patch("/api/update-preferences", (req, res) => {});
+app.patch("/api/update-preferences/:id", isLoggedIn, (req, res) => {
+  const { id } = req.params
+  const { preferences } = req.body
+  User.findByIdAndUpdate(id, {
+    preferences
+  })
+  .then(success => {
+    res.status(200).send("New preferences saved!")
+  })
+  .catch(err => {
+    console.error(err);
+    res.status(500).send("Something went wrong.")
+  })
+});
 
 // endpoint for admins to delete from list of approved preferences via Postman
 // to see list of current preferences stored in database: send DELETE request to /api/delete-preferences (no id)
@@ -299,7 +342,7 @@ app.delete("/api/reported-links", (req, res) => {
 });
 
 // catch all route to allow react router to take control of routing (said to be best placed after all api routes)
-app.get("/*any", (req, res) => {
+app.get("/*any", isLoggedIn, (req, res) => {
   res.sendFile(path.resolve(__dirname, "../dist", "index.html"));
 });
 
