@@ -2,9 +2,8 @@ import React from "react";
 import { useState, useEffect, useEffectEvent } from "react";
 import SuggestedListEntry from "./SuggestedListEntry.jsx";
 
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
+
+import { Grid, Container, Box, Button } from "@mui/material"
 import axios from "axios";
 
 /* 
@@ -19,7 +18,7 @@ import axios from "axios";
 */
 
 export default function SuggestedJobList({ jobs, getJobListings, userPrefs }) {
-  let [limit, setLimit] = useState(8);
+  let [limit, setLimit] = useState(15);
   // executes logic on initial render & every time a change is made to userInfo
 
 
@@ -35,7 +34,7 @@ export default function SuggestedJobList({ jobs, getJobListings, userPrefs }) {
   // method used to render 5 more
   // jobs listings to the page
   const renderMoreJobs = () => {
-    setLimit((limit += 8));
+    setLimit((limit += 10));
   };
 
   /* Copy of current jobs listings state from App.jsx.
@@ -51,41 +50,54 @@ export default function SuggestedJobList({ jobs, getJobListings, userPrefs }) {
   return (
     <div>
       <h1>Find Jobs</h1>
-      <Container maxWidth="xl">
-        <Grid container spacing={2} overflow="auto" className="job-list">
+      <Container maxWidth="lg">
+        <Box sx={{
+          mt: 4,
+          height: '100%',
+          width: '100%',
+          
+        }}>
+        <Grid container className="job-list" sx={{
+          maxHeight: 660,
+          minWidth: 0,
+          minHeight: 0,
+          overflow: 'auto'
+        }}>
           {jobs.length !== 0 ? jobsToRender.map((job) => (
             
               <SuggestedListEntry
                 name={job.title}
                 link={job.redirect_url}
                 description={job.description}
+                location={`${job.location.area[3]}, ${job.location.area[1]}`}
                 key={job.id}
                 jobs={jobs}
+                
               />
             
           )) : <img style={{margin: 'auto'}} src="https://cdn.pixabay.com/animation/2022/07/29/03/42/03-42-22-68_512.gif"></img>}
         </Grid>
+        </Box>
       </Container>
       <div
         className="load-more-jobs"
         style={{
           display: "flex",
           justifyContent: "center",
-          marginTop: "20px",
+          marginTop: "10px",
+          pt: 8
+
         }}
       >
-        {/* same logic as our useEffect in this component
-            only difference is the ability to increment limit's state,
-            and ensure we have latest results API 
-            sometimes too many requests error when using checkboxes) WIP
-          */}
-        <button
+        {jobs.length !== 0 ? <Button
+        size="large"
+        flex="1" 
           onClick={() => {
             renderMoreJobs();
           }}
         >
           Load More Jobs
-        </button>
+        </Button> : null}
       </div>
     </div>
   );

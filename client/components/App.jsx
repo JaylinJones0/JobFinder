@@ -47,9 +47,9 @@ export default function App() {
       for (const pref of prefsArray) {
         let prefJobsObj =  await axios.get(`/api/findjobs/${pref}`).catch(err => console.error("Failed to GET preference job listings", err));
         const prefJobs = prefJobsObj.data
-      combinedJobs.push(prefJobs)
+      combinedJobs.push(filterUniqueJobs(prefJobs))
       }
-  setJobResults(filterUniqueJobs(combinedJobs.flat(prefsArray.length)))
+  setJobResults((combinedJobs.flat(prefsArray.length)))
   
     }
 
