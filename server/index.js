@@ -17,6 +17,7 @@ const {
   SuggestedPreference,
   User,
   ReportedUrl,
+  Jobs
 } = require("./db/index.js");
 const { error } = require("console");
 
@@ -326,6 +327,28 @@ app.delete("/api/reported-links", (req, res) => {
       );
     });
 });
+
+
+
+// JOBS (these routes require the user to be logged in)
+// //GET all jobs for logged in user (READ)
+// //endpoint to "/api/jobs"
+app.get("/api/jobs", isLoggedIn, (req, res) => {
+  //fetches user doc by id
+  User.findById(req.user.id)//req.user comes from passport session (id serialized from passport)
+   .then((user) => {
+    //if user found show their display name
+     console.log('User found:', user.displayName);
+     //send sc and user jobs data
+     res.status(200).send(user.jobs);//from embedded jobs array
+    })
+    //could'nt find user jobs? Send sc 500 and err
+   .catch((err) => {
+    console.log(err, "Could not find jobs");
+     res.sendStatus(500);
+   });
+});
+
 
 // catch all route to allow react router to take control of routing (said to be best placed after all api routes)
 app.get("/*any", isLoggedIn, (req, res) => {
