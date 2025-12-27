@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Routes, Route } from "react-router";
 import axios from "axios";
 
@@ -9,8 +9,6 @@ import Profile from "./Profile.jsx";
 import FindJobs from "./FindJobs.jsx";
 import DashBoard from "./Dashboard.jsx";
 import NavBar from "./Navbar.jsx";
-
-
 // helper to ensure jobs state contains only unique job listings based on id
 function filterUniqueJobs(arr) {
   const seenIds = new Set();
@@ -28,7 +26,6 @@ function filterUniqueJobs(arr) {
 
 export default function App() {
   const [jobResults, setJobResults] = useState([]);
-  const countRef = useRef(0);
   // if user is logged in
   const [userInfo, setUserInfo] = useState(null);
   const [userPrefs, setUserPrefs] = useState([]);
@@ -50,8 +47,8 @@ export default function App() {
         console.error(err);
       });
   };
-
-  const getJobListings = async (prefsArray, zipCode) => {
+  jobResults;
+  const getJobListings = useCallback(async (prefsArray, zipCode) => {
     if (prefsArray.length === 0) {
       let defaultJobsObj = await axios
         .get("/api/findjobs", { params: { where: zipCode || null } })
@@ -88,15 +85,7 @@ export default function App() {
       }
       setJobResults(combinedJobs.flat(prefsArray.length));
     }
-
-    // required to "update" the function when it's being used in child component.
-    // without useRef + countRef an infinite loop is triggered since adding a function
-    // in useEffect dependency array causes it to create a new instance of the function
-    // being used, and won't update the logic inside the new instance, meaning it'll use
-    // whatever the previous or 1st function's logic values were.
-    countRef.current += 1;
-  };
-
+  }, []);
 
   return (
     <>
