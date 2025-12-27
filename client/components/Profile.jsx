@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useEffect, useState } from "react";
 import {
   Button,
@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 
-export default function Profile({ userInfo }) {
+export default function Profile({ userInfo, userPrefs, getUserInfo }) {
   const [storedPrefs, setStoredPrefs] = useState([]);
   const [selectedPrefs, setSelectedPrefs] = useState([]);
   const [suggestionInputValue, setSuggestionInputValue] = useState("");
@@ -50,11 +50,12 @@ export default function Profile({ userInfo }) {
   // on intitial render/on change of stored preferences,
   // trigger rerender and update storedPrefs state
   useEffect(() => {
-    if (userInfo && userInfo.preferences.length !== 0) {
-      setSelectedPrefs(userInfo.preferences);
+    console.log('render')
+    if (userInfo && userPrefs.length !== 0) {
+      setSelectedPrefs(userPrefs);
     }
     getPrefs();
-  }, [userInfo]);
+  }, [userInfo, userPrefs]);
 
   const getPrefs = () => {
     axios
@@ -86,6 +87,7 @@ export default function Profile({ userInfo }) {
       })
       .then((response) => {
         const successMsg = response.data;
+        getUserInfo()
       })
       .catch((err) => {
         console.error(err);

@@ -34,7 +34,8 @@ export default function App() {
     getUserInfo();
   }, []);
 
-  const getUserInfo = () => {
+
+  const getUserInfo = useCallback(() => {
     axios
       .get("/api/user-info")
       .then((response) => {
@@ -46,7 +47,8 @@ export default function App() {
       .catch((err) => {
         console.error(err);
       });
-  };
+  }, []);
+
   jobResults;
   const getJobListings = useCallback(async (prefsArray, zipCode) => {
     if (prefsArray.length === 0) {
@@ -96,20 +98,22 @@ export default function App() {
         <Route path="/dashboard" element={<DashBoard />}></Route>
         <Route
           path="/profile"
-          element={<Profile userInfo={userInfo} />}
+          element={
+            userInfo && <Profile userPrefs={userPrefs} getUserInfo={getUserInfo} userInfo={userInfo} />
+          }
         ></Route>
 
         <Route
           path="/findjobs"
           element={
-            userInfo ? (
+            userInfo && (
               <FindJobs
                 jobs={jobResults}
                 getJobListings={getJobListings}
                 userInfo={userInfo}
                 userPrefs={userPrefs}
               />
-            ) : null
+            )
           }
         ></Route>
       </Routes>

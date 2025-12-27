@@ -167,6 +167,7 @@ app.patch("/api/update-preferences/:id", isLoggedIn, (req, res) => {
     preferences
   })
   .then(success => {
+    console.log('yes')
     res.status(200).send("New preferences saved!")
   })
   .catch(err => {
