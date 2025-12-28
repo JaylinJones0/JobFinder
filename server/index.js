@@ -33,6 +33,7 @@ function isLoggedIn(req, res, next) {
   req.user ? next() : res.sendStatus(401);
 }
 
+
 //MIDDLEWARE:
 app.use(express.static(path.resolve(__dirname, "../dist")));
 app.use(express.json());
@@ -348,6 +349,44 @@ app.get("/api/jobs", isLoggedIn, (req, res) => {
      res.sendStatus(500);
    });
 });
+
+//POST to create a new user job (CREATE)
+app.post("/api/jobs", isLoggedIn, (req, res) => {
+  //access (embedded) jobs object from req body where job data lives (title and status)
+  const { jobs } = req.body;
+  //query db to find user doc using logged in users id
+  User.findById(req.user.id)//this comes from passport
+  //check if authenticated user has required fields?
+  .then((user) => {//this block will run after user is found
+    //if the user does not exist in db
+    if(!user){
+      //sc 404 user doesn't exist
+      return res.sendStatus(404);
+    }
+    //add new job obj to current users embedded jobs array(creating)
+    user.jobs.push({
+      title: jobs.title,
+      status: jobs.status
+    })
+    //save updated user doc to db
+    return user.save()
+  })
+  //now we have the updated user object
+  .then((updatedUser) => { //this runs after successful save to db
+    //get the last job added to users updated array
+   const newJob = updatedUser.jobs[updatedUser.jobs.length - 1];
+   //send created job and sc
+   res.status(201).send(newJob);
+  })
+  //error handling
+  .catch((err) => {
+    console.log(err, "could not create new job");
+    res.sendStatus(500);
+  })
+
+})
+
+
 
 
 // catch all route to allow react router to take control of routing (said to be best placed after all api routes)
