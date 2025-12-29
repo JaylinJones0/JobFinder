@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 
-main().then(() => {
-  console.info("Connected to the database");
-}).catch((err) => console.log("Failed to connect to database", err));
+main()
+  .then(() => {
+    console.info("Connected to the database");
+  })
+  .catch((err) => console.log("Failed to connect to database", err));
 
 async function main() {
   await mongoose.connect("mongodb://127.0.0.1:27017/jobfinder");
@@ -21,32 +23,52 @@ const suggestedPreferenceSchema = new mongoose.Schema({
     type: String,
     minLength: 2,
     maxLength: 50,
-  }
-})
+  },
+});
 
-const SuggestedPreference = mongoose.model("SuggestedPreference", suggestedPreferenceSchema)
+const SuggestedPreference = mongoose.model(
+  "SuggestedPreference",
+  suggestedPreferenceSchema
+);
+
+
+//Jobs
+const jobSchema = new mongoose.Schema({
+  title: String, //job title
+  status: {//controlled values
+    type: String,
+    enum: ["applied", "interviewing", "offer", "rejected"],//statuses
+    // default: "applied",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,//current date and time
+  },
+});
+
+const Jobs = mongoose.model("Jobs", jobSchema);
 
 // User
 const userSchema = new mongoose.Schema({
   googleId: {
     type: String,
-    required: true
+    required: true,
   },
 
   displayName: {
     type: String,
-    required: true
+    required: true,
   },
 
   image: {
-    type: String
+    type: String,
   },
 
   email: {
-    type: String
+    type: String,
   },
 
-  jobs: [],
+  jobs: [jobSchema],
   preferences: [],
 });
 
@@ -65,4 +87,5 @@ module.exports = {
   SuggestedPreference,
   User,
   ReportedUrl,
+  Jobs,
 };
