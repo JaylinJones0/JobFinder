@@ -34,6 +34,8 @@ function isLoggedIn(req, res, next) {
 }
 
 
+
+
 //MIDDLEWARE:
 app.use(express.static(path.resolve(__dirname, "../dist")));
 app.use(express.json());
@@ -380,7 +382,51 @@ app.post("/api/jobs", isLoggedIn, (req, res) => {
   })
   //error handling
   .catch((err) => {
-    console.log(err, "could not create new job");
+    console.log(err, "Could not create new job");
+    res.sendStatus(500);
+  })
+
+})
+
+//PUT to update status of existing job data
+app.put("/api/jobs/:jobsId", isLoggedIn, (req, res) => {
+  //destructure jobsid obj from req.params (to locate updated job)
+  const { jobsId } = req.params;
+  //status = updated job status from req.body
+  const status = req.body.status
+
+  //find logged in user in db
+  User.findById(req.user.id)
+  .then((user) => {
+    console.log("USER", req.user)
+    //if the user does not exist in db
+    if(!user){
+      //sc 404 user doesn't exist
+      return res.sendStatus(404);
+    }
+   //reference jobs whos id = jobsId param (updated user job)
+   const job = user.jobs.id(jobsId)
+   //check if job exist, if not
+   if(!job){
+    //send sc
+    res.sendStatus(500);
+   }
+   //check if updated status exist on job
+   if(status){
+    //update job status in memory
+    job.status = status;
+   }
+
+   //save updated to db
+   return user.save()
+
+
+  }).then((updatedJob) => { //this runs after successful save to db
+   //send changed job and sc
+   res.status(200).send(updatedJob.jobs.id(jobsId));
+  })//error handling
+  .catch((err)=> {
+    console.log(err, "Can not update status of job");
     res.sendStatus(500);
   })
 
