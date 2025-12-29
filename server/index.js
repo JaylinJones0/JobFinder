@@ -435,8 +435,6 @@ app.put("/api/jobs/:jobsId", isLoggedIn, (req, res) => {
 app.delete("/api/jobs/:jobsId", isLoggedIn, (req, res) => {
   //destructure jobsid obj from req.params (to locate updated job)
   const { jobsId } = req.params;
-  //status = updated job status from req.body
-  const status = req.body.status
 
   //find logged in user in db
   User.findById(req.user.id)
