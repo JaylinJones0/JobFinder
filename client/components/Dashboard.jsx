@@ -1,45 +1,52 @@
 import React from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
-import JobList from "./JobList.jsx";
 
-export default function Dashboard() {
-  //set init state of jobs
-  const [jobs, setJobs] = useState([]);
-  console.log(jobs);
+import { useState, useEffect } from "react";
+import { Box, Button , Dialog, Select } from "@mui/material"
 
-  //on init render or on change of jobs
+import JobList from "./JobList.jsx"
+
+//need to import statuses or set them here
+
+//create dashboard component
+export default function Dashboard () {
+
+  //set state of jobs when fetched from backend & rendered to page
+  const [jobs, setJobs] = useState([]);// useState hook b/c jobs need re render when jobs state changes
+  //set state for visibility of create jobs dialog
+  const [dialog, openDialog] = useState(false);
+  //set state for adding a new job title
+  const [title, setTitle ] = useState(""); //useState hook b/c input field updates as user types
+  //set state for adding a status to job
+  const [status, setStatus] = useState("applied") //useState hook b/c dialog dropdown updates state when status changes
+
+
+
+  //useEffect hook runs on mount renders all user jobs to dashboard
   useEffect(() => {
-    //invoke fn to get all jobs from backend
-    getJobs();
-  }, []);
+    //call to backend endpoint
+    axios.get('/api/jobs')
+    //get jobs data in response
+    .then((job) => {
+      //save job data in jobs state
+      setJobs(job.data);
+      console.log(job.data)
+      //error handling
+    }).catch((err) => {
+      console.log(err);
+    })
 
-  //function gets all job data from backend
-  const getJobs = () => {
-    //make a call to endpoint to get all jobs
-    axios.get("/api/jobs")
-      //we get jobs array in response data
-      .then((res) => {
-        //store the jobs array in state
-        setJobs(res.data);
-        //error handling
-      }).catch((err) => {
-        console.log(err);
-      });
-  };
+  }, []) //useEffect runs once after mount
 
-  //render jobs to client
-  //map over jobs array.
-  //use id as unique key for each job
-  //extract each job title and status and render to page
   return (
-    <>
-      {jobs.map((job) => (
-        <div key={job._id}>
-          <p> {job.title}</p>
-          <p> {job.status}</p>
-        </div>
-      ))}
-    </>
-  );
+    <Box>
+      <Button variant="contained" color="primary" onClick={() => setOpen(true)}> CREATE JOB
+
+      </Button>
+
+    </Box>
+
+  )
+
 }
+
