@@ -356,7 +356,6 @@ app.get("/api/jobs", isLoggedIn, (req, res) => {
 //POST to create a new user job (CREATE)
 app.post("/api/jobs", isLoggedIn, (req, res) => {
   //access (embedded) jobs object from req body where job data lives (title and status)
-  //don't need entire job object just the values
   const { title, status } = req.body;
   //query db to find user doc using logged in users id
   User.findById(req.user.id)//this comes from passport

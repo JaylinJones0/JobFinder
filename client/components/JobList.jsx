@@ -12,7 +12,6 @@ export default function JobList({jobs}){
     <div style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}>
       {/* for each status create a column */}
       {jobStatus.map((status) => {
-        {/* */}
        return <StatusSection
        key={status}
        //column label is status name
