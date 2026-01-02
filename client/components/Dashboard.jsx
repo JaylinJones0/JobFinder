@@ -44,8 +44,8 @@ export default function Dashboard () {
     //post to backend to create a job
     axios.post('/api/jobs', {title, status}, /*{ withCredentials: true }*/)
     .then((job) => {//when job created
-      console.log(job)
-      setJobs(job.data)
+
+      setJobs(prevJob => [...prevJob, job.data])
       //close dialog
       setDialog(false);
       //set input to the initial state
