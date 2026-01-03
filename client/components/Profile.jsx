@@ -14,11 +14,11 @@ import {
   Container,
   Typography,
   Paper,
-  Input,
   TextField,
   FormHelperText,
 } from "@mui/material";
 import axios from "axios";
+import { Navigate } from "react-router";
 
 export default function Profile({ userInfo, userPrefs, getUserInfo }) {
   const [storedPrefs, setStoredPrefs] = useState([]);
@@ -118,10 +118,6 @@ export default function Profile({ userInfo, userPrefs, getUserInfo }) {
       });
     }
 
-    // before render check if user is signed in,
-    if (!userInfo) {
-      return <div>You should not be here buddy</div>;
-    }
 
     return (
       <Container
