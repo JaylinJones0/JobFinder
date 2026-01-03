@@ -64,6 +64,7 @@ export default function JobListEntry ({job}){
             // has the user already reported it?
             // if so, display a message saying that they have already reported this link.
             setWarnMessage(true);
+            setSuccessMessage(false);
           } else {
             // if not...
             // make a PATCH request, and send the current userID and related link.
@@ -88,27 +89,29 @@ export default function JobListEntry ({job}){
     <div style={{border: "1px solid #ddd", padding: 5, marginBottom: 5, borderRadius: 4}}>
       {job.title}
       {job.link && (<a href={job.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: 15 }}>View Job Posting</a>)}
-      <button
-          onClick={(event) => {
-            handleReportSubmission(job.link);
-          }}
-        >
-          Report Job
-        </button>
-        {warnMessage ? (
-          <p id="report-warning-alreadysent">
-            You have already reported this link. Another report was not sent.
-          </p>
-        ) : (
-          <></>
-        )}
-        {successMessage ? (
-          <p id="report-confirm">
-            Thanks you for you input! We have saved your report.
-          </p>
-        ) : (
-          <></>
-        )}
+      <div>
+        <button
+            onClick={(event) => {
+              handleReportSubmission(job.link);
+            }}
+          >
+            Report Job
+          </button>
+          {warnMessage ? (
+            <p id="report-warning-alreadysent">
+              You have already reported this link. Another report was not sent.
+            </p>
+          ) : (
+            <></>
+          )}
+          {successMessage ? (
+            <p id="report-confirm">
+              Thanks you for you input! We have saved your report.
+            </p>
+          ) : (
+            <></>
+          )}
+      </div>
     </div>
   )
 }
