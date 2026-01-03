@@ -35,6 +35,7 @@ const SuggestedPreference = mongoose.model(
 //Jobs
 const jobSchema = new mongoose.Schema({
   title: String, //job title
+  link: String,
   status: {//controlled values
     type: String,
     enum: ["applied", "interviewing", "offer", "rejected"],//statuses

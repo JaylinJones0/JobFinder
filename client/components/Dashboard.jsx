@@ -13,14 +13,16 @@ const jobStatus = ["applied", "interviewing", "offer", "rejected"]
 //create dashboard component
 export default function Dashboard () {
 
-  //set state of jobs when fetched from backend & rendered to page
-  const [jobs, setJobs] = useState([]);// useState hook b/c jobs need re render when jobs state changes
-  //set state for visibility of create jobs dialog false = hidden
+  //state of jobs
+  const [jobs, setJobs] = useState([]);//jobs need re render when jobs state changes
+  // visibility of create jobs dialog false = hidden
   const [openDialog, setDialog] = useState(false);
-  //set state for adding a new job title
-  const [title, setTitle ] = useState(""); //useState hook b/c input field updates as user types
-  //set state for adding a status to job
-  const [status, setStatus] = useState("applied") //useState hook b/c dialog dropdown updates state when status changes
+  //state of title, adding a new job title
+  const [title, setTitle ] = useState("");
+  //state of status, adding a status to job
+  const [status, setStatus] = useState("applied"); //default to 'applied'
+  //state of job link
+  const [link, setLink] = useState("");
 
 
 
@@ -41,17 +43,19 @@ export default function Dashboard () {
 
   //handle creating a new job when user sets title and status and clicks save
   const CreateJob = () => {
-    //post to backend to create a job
-    axios.post('/api/jobs', {title, status}, /*{ withCredentials: true }*/)
+    //post to backend to create a job w/ job data in req body
+    axios.post('/api/jobs', {title, status, link} /*,{ withCredentials: true }*/)
     .then((job) => {//when job created
-
-      setJobs(prevJob => [...prevJob, job.data])
+      //add newly created job to existing jobs, update its state
+      setJobs(prevJob => [...prevJob, job.data]);
       //close dialog
       setDialog(false);
       //set input to the initial state
       setTitle("");
       //set dropdown to default
       setStatus("applied");
+      //set link to init state
+      setLink("")
 
     }).catch((err) => {
       console.log(err);
@@ -59,24 +63,46 @@ export default function Dashboard () {
 
   }
 
-  
+  //handle updating a job
+   //const UpdateJob = (jobId, newStatus) => {
+  //   //put to backend to update a job w/ by id
+  //   axios.put(`/api/jobs/${jobId}`, {
+  //     //set current state of status to the new status
+  //     status: newStatus
+  //   }).then((updated) => {
+  //      //get updated jobs data in response
+  //     const updatedJob = updated.data;
+
+  //     setJobs(prevJobs => prevJobs.map(job => {
+  //         job._id === updatedJob._id ? updatedJob : job
+  //       }
+  //     ))
+  //   }).catch((err) => {
+  //     console.log(err);
+  //   });
+   //}
+
+
+
+
   return (
     /*create job button */
     <Box>
       <Button variant="contained" color="primary" onClick={() => setDialog(true)}> CREATE JOB</Button>
-    {/* create job dialog, clicking outside closes*/}
+    {/* create job dialog controlled by open state, onClose sets state to original state, clicking outside closes*/}
       <Dialog open={openDialog} onClose={() => setDialog(false)}>
         <DialogContent>
-          {/* text input displays default title, updates on every letter */ }
-          <TextField label="Enter Job Title" value={title} onChange={(e) => setTitle(e.target.value)} fullWidth sx={{mb: 2}} />
+          {/* text input displays default title, onChange sets title to keystroke */ }
+          <TextField required label="Enter Job Title" value={title} onChange={(e) => setTitle(e.target.value)} fullWidth sx={{mb: 2}} />
+              <TextField label="Enter Job Link" value={link} onChange={(e) => setLink(e.target.value)} fullWidth sx={{mb: 2}} />
             <FormControl fullWidth>
-              <InputLabel /*id="statusLabel"*/> STATUS </InputLabel>
-              {/*shows default status updates status when changed to whatever is typed*/}
-              <Select /*labelId="statusLabel"*/ value={status} onChange={(e) => setStatus(e.target.value)}>
-                 {/*loop through statuses*/}
+              <InputLabel>STATUS</InputLabel>
+              {/*shows default status, onChange sets status to status */}
+              <Select labelId="statusLabel" id="status-label" value={status} label='STATUS' onChange={(e) => setStatus(e.target.value)}>
+                 {/*loop through status array*/}
                 {jobStatus.map((stat) => (
-                <MenuItem key={stat} value={stat}>{/*set menu items to statuses (each status can be selected)*/}
-                  {stat} {/*display status*/}
+                <MenuItem key={stat} value={stat}>{/*value = value selected when item chosen (statuses can be selected)*/}
+                  {stat.toUpperCase()} {/*display status*/}
                 </MenuItem>
               ))}
               </Select>
@@ -89,7 +115,7 @@ export default function Dashboard () {
           <Button onClick={CreateJob} variant="contained" color="primary"> Save </Button>
         </DialogActions>
         </Dialog>
-        <JobList jobs={jobs} />
+        <JobList jobs={jobs} /*onUpdate={UpdateJob}*/ />
 
     </Box>
 
