@@ -18,7 +18,9 @@ export default function JobList({jobs}){
        status={status}
        //what the column shows
        //filter jobs and get ones w/ status matching column name
-       jobs={jobs.filter((job) => job.status === status)} />
+       jobs={jobs.filter((job) => job.status === status)}
+       /*onUpdate={onUpdate}*/
+       />
       })}
     </div>
   )

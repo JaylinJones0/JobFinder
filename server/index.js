@@ -356,7 +356,7 @@ app.get("/api/jobs", isLoggedIn, (req, res) => {
 //POST to create a new user job (CREATE)
 app.post("/api/jobs", isLoggedIn, (req, res) => {
   //access (embedded) jobs object from req body where job data lives (title and status)
-  const { title, status } = req.body;
+  const { title, status, link } = req.body;
   //query db to find user doc using logged in users id
   User.findById(req.user.id)//this comes from passport
   //check if authenticated user has required fields?
@@ -369,7 +369,8 @@ app.post("/api/jobs", isLoggedIn, (req, res) => {
     //add new job obj to current users embedded jobs array(creating)
     user.jobs.push({
       title: title,
-      status: status
+      status: status,
+      link: link
     })
     //save updated user doc to db
     return user.save()

@@ -20,7 +20,9 @@ export default function Dashboard () {
   //state of title, adding a new job title
   const [title, setTitle ] = useState("");
   //state of status, adding a status to job
-  const [status, setStatus] = useState("applied") //default to 'applied'
+  const [status, setStatus] = useState("applied"); //default to 'applied'
+  //state of job link
+  const [link, setLink] = useState("");
 
 
 
@@ -42,7 +44,7 @@ export default function Dashboard () {
   //handle creating a new job when user sets title and status and clicks save
   const CreateJob = () => {
     //post to backend to create a job w/ job data in req body
-    axios.post('/api/jobs', {title, status} /*,{ withCredentials: true }*/)
+    axios.post('/api/jobs', {title, status, link} /*,{ withCredentials: true }*/)
     .then((job) => {//when job created
       //add newly created job to existing jobs, update its state
       setJobs(prevJob => [...prevJob, job.data]);
@@ -52,6 +54,8 @@ export default function Dashboard () {
       setTitle("");
       //set dropdown to default
       setStatus("applied");
+      //set link to init state
+      setLink("")
 
     }).catch((err) => {
       console.log(err);
@@ -59,14 +63,24 @@ export default function Dashboard () {
 
   }
 
-  const UpdateJob = () => {
-    axios.put("/api/jobs/:jobsId")
-    .then(() => {
+  //handle updating a job
+   //const UpdateJob = (jobId, newStatus) => {
+  //   //put to backend to update a job w/ by id
+  //   axios.put(`/api/jobs/${jobId}`, {
+  //     //set current state of status to the new status
+  //     status: newStatus
+  //   }).then((updated) => {
+  //      //get updated jobs data in response
+  //     const updatedJob = updated.data;
 
-    }).catch((err) => {
-      console.log(err);
-    });
-  }
+  //     setJobs(prevJobs => prevJobs.map(job => {
+  //         job._id === updatedJob._id ? updatedJob : job
+  //       }
+  //     ))
+  //   }).catch((err) => {
+  //     console.log(err);
+  //   });
+   //}
 
 
 
@@ -80,6 +94,7 @@ export default function Dashboard () {
         <DialogContent>
           {/* text input displays default title, onChange sets title to keystroke */ }
           <TextField required label="Enter Job Title" value={title} onChange={(e) => setTitle(e.target.value)} fullWidth sx={{mb: 2}} />
+              <TextField label="Enter Job Link" value={link} onChange={(e) => setLink(e.target.value)} fullWidth sx={{mb: 2}} />
             <FormControl fullWidth>
               <InputLabel>STATUS</InputLabel>
               {/*shows default status, onChange sets status to status */}
@@ -100,7 +115,7 @@ export default function Dashboard () {
           <Button onClick={CreateJob} variant="contained" color="primary"> Save </Button>
         </DialogActions>
         </Dialog>
-        <JobList jobs={jobs} />
+        <JobList jobs={jobs} /*onUpdate={UpdateJob}*/ />
 
     </Box>
 
