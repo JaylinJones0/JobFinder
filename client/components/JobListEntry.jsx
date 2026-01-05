@@ -1,11 +1,12 @@
 import React from "react"
+import {Button} from "@mui/material"
 
 // We would not need this normally, but we need it to adapt based on report input.
 import { useState } from "react";
 import axios from "axios";
 
 //accepts job prop from statusSection
-export default function JobListEntry ({job, currentUser}){
+export default function JobListEntry ({job, currentUser, onDelete}){
 
   // REPORTING STUFF
   const [warnMessage, setWarnMessage] = useState(false);
@@ -88,7 +89,9 @@ export default function JobListEntry ({job, currentUser}){
   return (
     <div style={{border: "1px solid #ddd", padding: 5, marginBottom: 5, borderRadius: 4}}>
       {job.title}
+      <Button size="small" color='error' onClick={() => onDelete(job._id)} sx={{ borderRadius: '1000px', m:1}}>DELETE</Button>
       {job.link && (<a href={job.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: 15 }}>View Job Posting</a>)}
+
       <div>
         <button
             onClick={(event) => {

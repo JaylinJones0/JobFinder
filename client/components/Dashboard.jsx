@@ -95,7 +95,7 @@ export default function Dashboard ({ currentUser }) {
   }
 
   //handle updating a job
-   //const UpdateJob = (jobId, newStatus) => {
+   //const updateJob = (jobId, newStatus) => {
   //   //put to backend to update a job w/ by id
   //   axios.put(`/api/jobs/${jobId}`, {
   //     //set current state of status to the new status
@@ -104,9 +104,7 @@ export default function Dashboard ({ currentUser }) {
   //      //get updated jobs data in response
   //     const updatedJob = updated.data;
 
-  //     setJobs(prevJobs => prevJobs.map(job => {
-  //         job._id === updatedJob._id ? updatedJob : job
-  //       }
+
   //     ))
   //   }).catch((err) => {
   //     console.log(err);
@@ -114,12 +112,27 @@ export default function Dashboard ({ currentUser }) {
    //}
 
 
+    //handle deleting a job
+   const deleteJob = (jobId) => {
+    //put to backend to update a job w/ by id
+    axios.delete(`/api/jobs/${jobId}`, {
+    }).then(() => {
+      setJobs(prevJob =>
+        prevJob.filter(job => job._id !== jobId)
+      )
+
+    }).catch((err) => {
+      console.log(err);
+    });
+   }
+
+
 
 
   return (
     /*create job button */
     <Box>
-      <Button variant="contained" color="primary" onClick={() => setDialog(true)}> CREATE JOB</Button>
+      <Button variant="contained" color="success" onClick={() => setDialog(true)}> CREATE JOB</Button>
     {/* create job dialog controlled by open state, onClose sets state to original state, clicking outside closes*/}
       <Dialog open={openDialog} onClose={() => setDialog(false)}>
         <DialogContent>
@@ -153,7 +166,7 @@ export default function Dashboard ({ currentUser }) {
           <Button onClick={CreateJob} variant="contained" color="primary"> Save </Button>
         </DialogActions>
         </Dialog>
-        <JobList jobs={jobs} /*onUpdate={UpdateJob}*/ currentUser={currentUser} />
+        <JobList jobs={jobs} /*onUpdate={updateJob}*/ onDelete={deleteJob} />
 
     </Box>
 
