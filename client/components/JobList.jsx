@@ -6,7 +6,7 @@ import StatusSection from "./StatusSection.jsx";
 const jobStatus = ["applied", "interviewing", "offer", "rejected"];
 
 //job list accepts jobs prop from dashboard
-export default function JobList({jobs, onDelete}){
+export default function JobList({jobs, onDelete, currentUser}){
   return(
     //side by side flex box style
     <div style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}>

@@ -11,7 +11,7 @@ export default function StatusSection({status, jobs, onDelete}){
       {/*map over jobs, make sure jobs is defined*/}
       {(jobs).map((job) => {
          {/*render one entry, pass one entry(job) down as prop, set unique key  */}
-        return <JobListEntry key={job._id} job={job}/>
+        return <JobListEntry key={job._id} job={job} onDelete={onDelete}/>
       })}
     </div>
   )
