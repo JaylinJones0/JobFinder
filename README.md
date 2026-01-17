@@ -6,7 +6,7 @@ An app designed to help someone searching for a job organize their work. WIP
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-* Make sure you have installed all dependancies with npm.
+* Make sure you have installed all dependencies with npm.
 * Allow your distribution files to be made with npm run build. You can end it after the first build if you do not wish to make changes.
 * Make sure MongoDB is running with mongod. 
 * Then you can run the application with npm start. 
@@ -14,7 +14,7 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 The application is designed to run in a ubuntu terminal.
-You need Node, ideally installed with NVM, and then you need access to npm to install all of the apps other required dependancies. 
+You need Node, ideally installed with NVM, and then you need access to npm to install all of the apps other required dependencies. 
 
 ### Deployment
 
@@ -28,10 +28,23 @@ We used ESLint to enforce style. We used the base rules as our project hasn't ye
 
 * React
 * Express
+* Express Session
 * MongoDB
-* NodeJS
+* Connect Mongo
+* Mongoose
+* NodeJS (Version 22)
+* Google Passport 2.0
+* Adzuna API (https://developer.adzuna.com/overview)
+* Toolpad
+* React Router
+* Emotion-JS
+* Axios
+* Babel
 * Material UI
-* (this section isn't yet complete!)
+* Dotenv
+* Webpack
+* ESLint
+* Nodemon
 
 ## Authors
 

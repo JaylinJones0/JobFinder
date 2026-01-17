@@ -18,9 +18,29 @@ import {
 } from "@mui/material";
 
 export default function SuggestedJobList({ jobs, getJobListings, userPrefs }) {
+  /**
+   * A variable that holds how many jobs should be rendered per page.
+   * @type {number}
+   * @name JOBS_PER_PAGE
+   */
   const JOBS_PER_PAGE = 15;
+  /**
+   * A state variable that holds the current page number the user is viewing.
+   * @type {number}
+   * @name currentPage
+   */
   const [currentPage, setCurrentPage] = useState(1);
+  /**
+   * A state variable that holds the current value of the Zip Code input field
+   * @type {string}
+   * @name userZipCodeInput
+   */
   const [userZipCodeInput, setUserZipCodeInput] = useState("");
+  /**
+   * A state variable that holds the current value of the Zip Code input field
+   * @type {string}
+   * @name userZipCodeInput
+   */
   const [selectedJob, setSelectedJob] = useState(null);
 
   // Fetch jobs initially
@@ -33,6 +53,7 @@ export default function SuggestedJobList({ jobs, getJobListings, userPrefs }) {
     setUserZipCodeInput(e.target.value);
   };
 
+  // handle apply change button
   const handleApplyChanges = useCallback(() => {
     getJobListings(userPrefs, userZipCodeInput);
     setCurrentPage(1); // reset to first page
@@ -197,7 +218,9 @@ export default function SuggestedJobList({ jobs, getJobListings, userPrefs }) {
                 </Box>
                 <Box sx={{}}>
                   {/* Ryan Adds onClick functionality to this button to save listing*/}
-                  <Button title="Click to save listing"><AddBox fontSize="large"/></Button>
+                  <Button title="Click to save listing">
+                    <AddBox fontSize="large" />
+                  </Button>
                 </Box>
               </CardActions>
             </Card>
