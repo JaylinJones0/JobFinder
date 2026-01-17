@@ -5,6 +5,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import ExampleJobs from "./ExampleJobs.jsx";
 import findJobs from "../src/assets/find-jobs.png";
 import dashboard from "../src/assets/dashboard.png";
+import reporting from "../src/assets/reporting.png";
 
 export default function Home({ jobs, getJobListings }) {
   return (
@@ -76,9 +77,9 @@ export default function Home({ jobs, getJobListings }) {
             </Typography>
           </Box>
           <Box sx={{ height: "100%", width: "100%", bgcolor: "lightgray" }}>
-            <WarningIcon
-              sx={{ height: "100%", width: "100%", color: "orange" }}
-            ></WarningIcon>
+            <img
+              src={reporting} height="100%" width="100%"
+            ></img>
             <Typography>
               Our users are able to report fake job postings!
               <br />
