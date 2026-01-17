@@ -7,9 +7,16 @@ An app designed to help someone searching for a job organize their work. Create 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 * Make sure you have installed all dependencies with npm.
-* Allow your distribution files to be made with ```npm run build```. You can end it after the first build if you do not wish to make changes.
+* Allow your distribution files to be made with ```npm run build```. (You can end it after the first build successful build if you do not wish to make changes, but otherwise it will continue running due to the ```--watch``` tag.)
 * Make sure MongoDB is running with ```mongod```.
 * Then you can run the application with ```npm start```.
+
+### Environment Variables
+
+Ensure that you have the following, use the ```.env.example``` for reference.
+* ```app_id```, ```app_key```  - For the AdZuna API.
+* ```GOOGLE_CLIENT_ID```, ```GOOGLE_CLIENT_SECRET``` - Setup for Google OAuth.
+* ```secret``` - Setup for the Express Sessions Middleware.
 
 ### Prerequisites
 
