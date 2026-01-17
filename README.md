@@ -11,6 +11,11 @@ These instructions will get you a copy of the project up and running on your loc
 * Make sure MongoDB is running with ```mongod```.
 * Then you can run the application with ```npm start```.
 
+### Prerequisites
+
+The application is designed to run in a ubuntu terminal.
+You need Node, ideally installed with NVM, and then you need access to npm to install all of the apps other required dependencies. 
+
 ### Environment Variables
 
 Ensure that you have the following, use the ```.env.example``` for reference.
@@ -36,10 +41,15 @@ We used ESLint to enforce style. We used the base rules as our project hasn't ye
 
 * React
 * Express
+* Express Session
 * MongoDB
 * NodeJS - 22
 * Material UI
-* (this section isn't yet complete!)
+* Dotenv
+* Webpack
+* ESLint
+* Nodemon
+* Adzuna API
 
 ## Authors
 
