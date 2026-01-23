@@ -17,6 +17,7 @@ const {
   SuggestedPreference,
   User,
   ReportedUrl,
+  Jobs
 } = require("./db/index.js");
 const { error } = require("console");
 
@@ -28,9 +29,12 @@ const port = 3000;
 function isLoggedIn(req, res, next) {
   //check if req has a user
   //if it does, move to next middleware fn
-  //if not return 401 (unauthorized)
-  req.user ? next() : res.sendStatus(401);
+  //if not redirect to home page
+  req.user ? next() : res.redirect('/');
 }
+
+
+
 
 //MIDDLEWARE:
 app.use(express.static(path.resolve(__dirname, "../dist")));
@@ -51,6 +55,7 @@ app.use(
 app.use(passport.initialize());
 app.use(express.urlencoded());
 app.use(passport.session());
+app.use(express.json());
 
 //ROUTES:
 
@@ -120,7 +125,8 @@ app.get('/api/preferences', (req, res) => {
 // will send back default job list for now
 app.get("/api/findjobs{/:category}", (req, res) => {
   const { category } = req.params;
-  const results_per_page = 50;
+  const { where } = req.query
+  const results_per_page = 150;
   // if category parameter is not defined send client default job listings
   axios
     .get("http://api.adzuna.com/v1/api/jobs/us/search/1", {
@@ -129,6 +135,7 @@ app.get("/api/findjobs{/:category}", (req, res) => {
         app_key,
         results_per_page,
         category: category || "",
+        where: where || "",
       },
     })
     .then((jobs) => {
@@ -326,6 +333,144 @@ app.delete("/api/reported-links", (req, res) => {
       );
     });
 });
+
+
+
+// JOBS (these routes require the user to be logged in)
+// //GET all jobs for logged in user (READ)
+// //endpoint to "/api/jobs"
+app.get("/api/jobs", isLoggedIn, (req, res) => {
+  //fetches user doc by id
+  User.findById(req.user.id)//req.user comes from passport session (id serialized from passport)
+   .then((user) => {
+     //send sc and user jobs data
+     res.status(200).send(user.jobs);//from embedded jobs array
+    })
+    //could'nt find user jobs? Send sc 500 and err
+   .catch((err) => {
+    console.log(err, "Could not find jobs");
+     res.sendStatus(500);
+   });
+});
+
+//POST to create a new user job (CREATE)
+app.post("/api/jobs", isLoggedIn, (req, res) => {
+  //access (embedded) jobs object from req body where job data lives (title and status)
+  const { title, status, link } = req.body;
+  //query db to find user doc using logged in users id
+  User.findById(req.user.id)//this comes from passport
+  //check if authenticated user has required fields?
+  .then((user) => {//this block will run after user is found
+    //if the user does not exist in db
+    if(!user){
+      //sc 404 user doesn't exist
+      return res.sendStatus(404);
+    }
+    //add new job obj to current users embedded jobs array(creating)
+    user.jobs.push({
+      title: title,
+      status: status,
+      link: link
+    })
+    //save updated user doc to db
+    return user.save()
+  })
+  //now we have the updated user object
+  .then((updatedUser) => { //this runs after successful save to db
+    //get the last job added to users updated array
+   const newJob = updatedUser.jobs[updatedUser.jobs.length - 1];
+   //send created job and sc
+   res.status(201).send(newJob);
+  })
+  //error handling
+  .catch((err) => {
+    console.log(err, "Could not create new job");
+    res.sendStatus(500);
+  })
+
+})
+
+//PUT to update status of existing job data
+app.put("/api/jobs/:jobsId", isLoggedIn, (req, res) => {
+  //destructure jobsid obj from req.params (to locate updated job)
+  const { jobsId } = req.params;
+  //status = updated job status from req.body
+  const status = req.body.status
+
+  //find logged in user in db
+  User.findById(req.user.id)
+  .then((user) => {
+    //if the user does not exist in db
+    if(!user){
+      //sc 404 user doesn't exist
+      return res.sendStatus(404);
+    }
+   //reference jobs whos id = jobsId param (updated user job)
+   const job = user.jobs.id(jobsId)
+   //check if job exist, if not
+   if(!job){
+    //send sc
+    res.sendStatus(500);
+   }
+   //check if updated status exist on job
+   if(status){
+    //update job status in memory
+    job.status = status;
+   }
+
+   //save updated to db
+   return user.save()
+
+
+  }).then((updatedJob) => { //this runs after successful save to db
+   //send changed job and sc
+   res.status(200).send(updatedJob.jobs.id(jobsId));
+  })//error handling
+  .catch((err)=> {
+    console.log(err, "Can not update status of job");
+    res.sendStatus(500);
+  })
+
+})
+
+//DELETE to delete existing jobs
+app.delete("/api/jobs/:jobsId", isLoggedIn, (req, res) => {
+  //destructure jobsid obj from req.params (to locate updated job)
+  const { jobsId } = req.params;
+
+  //find logged in user in db
+  User.findById(req.user.id)
+  .then((user) => {
+    //if the user does not exist in db
+    if(!user){
+      //sc 404 user doesn't exist
+      return res.sendStatus(404);
+    }
+   //reference jobs whos id = jobsId param (updated user job subdoc)
+   const job = user.jobs.id(jobsId)
+   //check if job exist, if not
+   if(!job){
+    //send sc
+    return res.sendStatus(500);
+   }
+   //delete updated user job from jobs array
+   job.deleteOne()
+
+   //persist deletion in db
+   return user.save()
+
+  }).then(() => {
+    //sc successful delete
+   res.sendStatus(204)
+  })//error handling
+  .catch((err)=> {
+    console.log(err, "Can not delete user job job");
+    res.sendStatus(500);
+  })
+
+})
+
+
 
 // catch all route to allow react router to take control of routing (said to be best placed after all api routes)
 app.get("/*any", isLoggedIn, (req, res) => {

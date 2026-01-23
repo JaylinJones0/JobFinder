@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useEffect, useState } from "react";
 import {
   Button,
@@ -14,13 +14,13 @@ import {
   Container,
   Typography,
   Paper,
-  Input,
   TextField,
   FormHelperText,
 } from "@mui/material";
 import axios from "axios";
+import { Navigate } from "react-router";
 
-export default function Profile({ userInfo }) {
+export default function Profile({ userInfo, userPrefs, getUserInfo }) {
   const [storedPrefs, setStoredPrefs] = useState([]);
   const [selectedPrefs, setSelectedPrefs] = useState([]);
   const [suggestionInputValue, setSuggestionInputValue] = useState("");
@@ -50,11 +50,11 @@ export default function Profile({ userInfo }) {
   // on intitial render/on change of stored preferences,
   // trigger rerender and update storedPrefs state
   useEffect(() => {
-    if (userInfo && userInfo.preferences.length !== 0) {
-      setSelectedPrefs(userInfo.preferences);
+    if (userInfo && userPrefs.length !== 0) {
+      setSelectedPrefs(userPrefs);
     }
     getPrefs();
-  }, [userInfo]);
+  }, [userInfo, userPrefs]);
 
   const getPrefs = () => {
     axios
@@ -86,6 +86,7 @@ export default function Profile({ userInfo }) {
       })
       .then((response) => {
         const successMsg = response.data;
+        getUserInfo()
       })
       .catch((err) => {
         console.error(err);
@@ -117,10 +118,6 @@ export default function Profile({ userInfo }) {
       });
     }
 
-    // before render check if user is signed in,
-    if (!userInfo) {
-      return <div>You should not be here buddy</div>;
-    }
 
     return (
       <Container
@@ -209,7 +206,7 @@ export default function Profile({ userInfo }) {
                   Suggest one here:
                 </Typography>
               </CardContent>
-              <FormControl sx={{}}>
+              <FormControl>
                 <Box
                   sx={{
                     display: "flex",
@@ -233,7 +230,7 @@ export default function Profile({ userInfo }) {
                     Send
                   </Button>
                 </Box>
-                <FormHelperText sx={{  }}>
+                <FormHelperText>
                   Suggestion review may take up to 7 business days.
                 </FormHelperText>
               </FormControl>
