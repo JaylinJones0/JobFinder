@@ -21,15 +21,16 @@ function ResponsiveAppBar() {
     setAnchorElNav(null);
   };
 
+
   return (
-     <AppBar position="static">
+     <AppBar sx={{bgcolor: '#f49645ff'}} position="static">
       <Container maxWidth="large">
         <Toolbar disableGutters>
           <IconButton
             size="large"
             aria-label="open menu"
-            onClick={handleOpenNavMenu}
             color="inherit"
+            onClick={handleOpenNavMenu}
             sx={{mr: 1}}
           >
           <MenuIcon />

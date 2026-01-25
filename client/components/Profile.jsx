@@ -47,7 +47,7 @@ export default function Profile({ userInfo, userPrefs, getUserInfo }) {
   }, [suggestionResponse]);
 
 
-  // on intitial render/on change of stored preferences,
+  // on initial render/on change of stored preferences,
   // trigger rerender and update storedPrefs state
   useEffect(() => {
     if (userInfo && userPrefs.length !== 0) {
@@ -118,6 +118,19 @@ export default function Profile({ userInfo, userPrefs, getUserInfo }) {
       });
     }
 
+    const outlineStyles = {
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#f49645ff', // Default outline color
+      borderWidth: '3px', // Change border thickness
+    },
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: '', // Hover outline color
+    },
+    '& .MuiInputLabel-root.Mui-focused': {
+      borderColor: '#f49645ff', // Focused outline color
+    },
+  }
+
 
     return (
       <Container
@@ -162,6 +175,7 @@ export default function Profile({ userInfo, userPrefs, getUserInfo }) {
                 <Select
                   labelId="preferences-multiple-chip-label"
                   id="preferences-multiple-chip"
+                  sx={outlineStyles}
                   multiple
                   value={selectedPrefs}
                   onChange={handleChange}
@@ -190,10 +204,9 @@ export default function Profile({ userInfo, userPrefs, getUserInfo }) {
                   ))}
                 </Select>
                 <Button
-                  variant="contained"
-                  color="inherit"
+                  variant="outlined"
                   size="large"
-                  sx={{ mt: 1 }}
+                  sx={{ color: '#f49645ff', borderColor: '#f49645ff ', backgroundColor: '#FDFBFB', borderWidth: 3, mt: 1}}
                   onClick={handleClick}
                 >
                   Apply Changes
@@ -215,6 +228,7 @@ export default function Profile({ userInfo, userPrefs, getUserInfo }) {
                   }}
                 >
                   <TextField
+                  sx={outlineStyles}
                     maxLength="50"
                     minLength=""
                     value={suggestionInputValue}
@@ -222,15 +236,15 @@ export default function Profile({ userInfo, userPrefs, getUserInfo }) {
                   ></TextField>
                   <Button
                     onClick={handleSend}
-                    variant="contained"
+                    variant="outlined"
                     color="inherit"
                     size="large"
-                    sx={{ height: "50px" }}
+                    sx={{ height: '50px', color: '#f49645ff', borderColor: '#f49645ff ', backgroundColor: '#FDFBFB', borderWidth: 3 }}
                   >
                     Send
                   </Button>
                 </Box>
-                <FormHelperText>
+                <FormHelperText sx={{ color: '#732400'}}>
                   Suggestion review may take up to 7 business days.
                 </FormHelperText>
               </FormControl>

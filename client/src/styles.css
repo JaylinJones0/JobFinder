@@ -1,3 +1,9 @@
+html { background-color: #fff8f5ff;}
+:root {
+  font-family: 'Jost Variable', sans-serif;
+  background-color: #FDFBFB !important;
+}
+
 body {
-  font-family: 'Roboto', sans-serif;
+  background-color: #FDFBFB !important;
 }

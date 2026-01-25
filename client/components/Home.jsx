@@ -1,19 +1,17 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router";
-import { Stack, Box, Typography, Button } from "@mui/material";
+import { Stack, Box, Typography, Button, Icon } from "@mui/material";
 import WarningIcon from "@mui/icons-material/Warning";
 import ExampleJobs from "./ExampleJobs.jsx";
 import findJobs from "../src/assets/find-jobs.png";
 import dashboard from "../src/assets/dashboard.png";
 import reporting from "../src/assets/reporting.png";
+import logo from "../src/assets/job-finder-logo.svg";
 
 export default function Home({ jobs, getJobListings }) {
   return (
     <Stack sx={{ width: "100vw", height: "100vh" }}>
-      <Stack
-        direction={"row"}
-        bgcolor="#bbdefb"
-      >
+      <Stack direction={"row"} bgcolor="#f2dbc7ff">
         <Box display="flex" m={10}>
           <Box>
             <img
@@ -23,15 +21,25 @@ export default function Home({ jobs, getJobListings }) {
             ></img>
           </Box>
 
-          <Box height="100%" alignItems={"center"} textAlign={"center"} p={0}>
-            <Typography variant="h2" mt={6}>
+          <Box  height="100%" justifyContent="center" alignItems="center" textAlign="center" gap={2}>
+            <Box
+              component="img"
+              src={logo}
+              alt="Job Finder logo"
+              sx={{ width: 80, height: 80 }}
+            ></Box>
+            <Typography variant="h2" fontWeight={500}>
               Job Finder
             </Typography>
-            <Typography fontSize={18} sx={{ whiteSpace: "pre-wrap", px: 20 }}>
+            <Typography
+              fontSize={18}
+              sx={{ whiteSpace: "pre-wrap", px: 20 }}
+              fontWeight={500}
+            >
               <br />
               {`Welcome to JobFinder! Having trouble keeping yourself organized while on the job hunt? Find documenting your progress on your own to be unintuitive? JobFinder is here to help. We aim to streamline the process of finding jobs you're interested in, and help you track your progress.`}
             </Typography>
-            <Typography fontSize={24}>
+            <Typography fontSize={24} fontWeight={600}>
               <br />
               {`Create an account today to make use of our job hunt tools.`}
             </Typography>
@@ -40,8 +48,15 @@ export default function Home({ jobs, getJobListings }) {
             <Button
               component={Link}
               to="/signin"
-              variant="contained"
-              color="inherit"
+              size="large"
+              variant="outlined"
+              sx={{
+                color: "#f49645ff",
+                borderColor: "#f49645ff",
+                backgroundColor: "#fff8f5ff",
+                borderWidth: 6,
+                fontSize: "20px",
+              }}
             >
               Get Started
             </Button>
@@ -54,7 +69,10 @@ export default function Home({ jobs, getJobListings }) {
           direction={"row"}
           spacing={2}
           sx={{
-            border: "1px solid black",
+            border: "4px solid #f49645ff",
+            backgroundColor: "#FDFBFB",
+            borderLeft: "none",
+            borderRight: "none",
             alignItems: "center",
             height: "600px",
             justifyContent: "stretch",
@@ -62,13 +80,13 @@ export default function Home({ jobs, getJobListings }) {
             p: 10,
           }}
         >
-          <Box sx={{ height: "100%", width: "100%", bgcolor: "lightgray" }}>
+          <Box sx={{ height: "100%", width: "100%" }}>
             <img src={dashboard} height="100%" width="100%"></img>
             <Typography whiteSpace={"pre-wrap"}>
               {`Use our dashboard to organize jobs by your current step in progress!\nYou can manually add jobs that you're interested in applying to.`}
             </Typography>
           </Box>
-          <Box sx={{ height: "100%", width: "100%", bgcolor: "lightgray" }}>
+          <Box sx={{ height: "100%", width: "100%" }}>
             <img src={findJobs} height="100%" width="100%"></img>
             <Typography>
               Find jobs relating to your interests!
@@ -76,10 +94,8 @@ export default function Home({ jobs, getJobListings }) {
               Sourced from the Adzuna API.
             </Typography>
           </Box>
-          <Box sx={{ height: "100%", width: "100%", bgcolor: "lightgray" }}>
-            <img
-              src={reporting} height="100%" width="100%"
-            ></img>
+          <Box sx={{ height: "100%", width: "100%" }}>
+            <img src={reporting} height="100%" width="100%"></img>
             <Typography>
               Our users are able to report fake job postings!
               <br />
@@ -92,7 +108,7 @@ export default function Home({ jobs, getJobListings }) {
       <Typography
         variant="h4"
         textAlign="center"
-        sx={{mt: 4}}
+        sx={{ mt: 4 }}
       >{`Here's an example of some of the jobs we could help you find!`}</Typography>
       <ExampleJobs exampleJobs={jobs} getJobListings={getJobListings} />
     </Stack>
