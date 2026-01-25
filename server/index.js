@@ -88,11 +88,24 @@ app.get("/protected", isLoggedIn, (req, res) => {
 
 //Logout route
 app.get("/logout", (req, res) => {
-  req.logout();
-  //destroy current session
-  req.session.destroy();
-  res.send('You are logged out')
-  res.redirect('/signin')
+  //FIXED: req.logout requires callback function
+  //removes user from session
+  req.logout( function (err) {
+    if(err){
+      return next(err);
+    }
+  });
+  //destroy current session data on server
+  // req.session.destroy(function (err){
+  //   if(err){
+  //     console.log('Failed to log you out:');
+  //     return res.status(500)
+  //   }
+  // });
+  //FIXED: Was destroying entire session, should just clear session cookies for user
+  res.clearCookie("connect.sid")
+  res.redirect('/')
+  console.log('You are logged out');
 });
 
 // General App Route:
