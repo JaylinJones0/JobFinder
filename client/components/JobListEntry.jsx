@@ -9,10 +9,28 @@ import axios from "axios";
 export default function JobListEntry ({job, currentUser, onDelete}){
 
   // REPORTING STUFF
+
+  /**
+   * @name warnMessage
+   * A state variable that decides whether or not to tell the user that they already reported the link.
+   * @type {boolean}
+  */
   const [warnMessage, setWarnMessage] = useState(false);
+
+  /**
+   * @name successMessage
+   * A state variable that decides whether or not to tell the user that the report went through successfully.
+   * @type {boolean}
+  */
   const [successMessage, setSuccessMessage] = useState(false);
 
-    // use this to compare links with the database. returns the then-able promise.
+  /**
+   * @name getReportedLink
+   * getReportedLink gets the link at the provided URL, and sees if it's in the reported-links table of the database.
+   * @param url 
+   * @type {string}
+   * @returns Returns an axios-get request, its errors are already catch-ed. You can .then off of it to do more with this function.
+  */
     const getReportedLink = (url) => {
       return axios
         .get("/api/reported-links", url ? { params: { link: url } } : {})
@@ -24,8 +42,15 @@ export default function JobListEntry ({job, currentUser, onDelete}){
         });
     };
   
-    // use this to create a new report if no one has ever reported the link.
-    // in the future, it should always just use the currently logged in user, rather than needing a userID passed in.
+  /**
+   * @name postReport
+   * postReport posts the report to the database if the current user is the first one to ever report it.
+   * @param url 
+   * @type {string}
+   * @param userID 
+   * @type {string}
+   * @returns Returns an axios-post request, its errors are already catch-ed. You can .then off of it to do more with this function.
+  */
     const postReport = (url, userID) => {
       return axios
         .post("/api/reported-links", {
@@ -39,8 +64,15 @@ export default function JobListEntry ({job, currentUser, onDelete}){
         });
     };
   
-    // use this to add a userID to a prexisting report.
-    // in the future, it should always just use the currently logged in user, rather than needing a userID passed in.
+  /**
+   * @name patchReport
+   * patchReport adds the passed in userID to the report, if it wasn't there already.
+   * @param url 
+   * @type {string}
+   * @param userID
+   * @type {string}
+   * @returns Returns an axios-patch request, its errors are already catch-ed. You can .then off of it to do more with this function.
+  */
     const patchReport = (url, userID) => {
       return axios
         .patch("/api/reported-links", {
@@ -55,6 +87,16 @@ export default function JobListEntry ({job, currentUser, onDelete}){
         });
     };
 
+    /**
+     * @name handleReportSubmission
+     * This function checks if the link has ever been reported. If it hasn't, it posts the users request, and if it has, it patches your user into the request.
+     * The function updates successMessage or warnMessage based on the output. 
+     * If the user has already reported this link, warnMessage is true. 
+     * If they haven't and the request worked, it sets successMessage to true.
+     * @param reportedUrl - the url that is being reported.
+     * @type {string}
+     * @returns Nothing.
+  */
     const handleReportSubmission = (reportedUrl) => {
 
       // first, it checks if the link has ever been reported...
