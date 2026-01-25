@@ -1,6 +1,5 @@
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
@@ -84,15 +83,13 @@ function ResponsiveAppBar() {
               Profile
             </MenuItem>
 
-             {/* <MenuItem
-              component={Link}
-              to="/logout"
-              onClick={handleCloseNavMenu}
+             <MenuItem
+              onClick={() => {
+                window.location.href = "/logout";
+              }}
             >
               Logout
-            </MenuItem> */}
-
-
+            </MenuItem>
           </Menu>
         </Toolbar>
       </Container>
