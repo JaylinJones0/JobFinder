@@ -84,15 +84,13 @@ function ResponsiveAppBar() {
               Profile
             </MenuItem>
 
-             {/* <MenuItem
-              component={Link}
-              to="/logout"
-              onClick={handleCloseNavMenu}
+             <MenuItem
+              onClick={() => {
+                window.location.href = "/logout";
+              }}
             >
               Logout
-            </MenuItem> */}
-
-
+            </MenuItem>
           </Menu>
         </Toolbar>
       </Container>

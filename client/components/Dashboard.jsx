@@ -25,9 +25,28 @@ export default function Dashboard ({ currentUser }) {
   const [link, setLink] = useState("");
 
   // REPORTING STUFF
+
+  /**
+   * @name reportCount
+   * A state variable that changes based on the number of reports it read on example.com's usersReported array.
+   * @type {number}
+  */
   const [reportCount, setReportCount] = useState(0); // just used to tell the user how many people have reported the link.
+
+  /**
+   * @name reportWarning
+   * A state variable that decides whether the warning that people have reported the input-ed link should show up. It requires that at least 3 people have reported the link for it to show up.
+   * @type {boolean}
+  */
   const [reportWarning, setReportWarning] = useState(false); // tells the app whether or not it needs to display a warning to the user. 
 
+  /**
+   * @name getReportedLink
+   * getReportedLink gets the link at the provided URL, and sees if it's in the reported-links table of the database.
+   * @param url 
+   * @type {string}
+   * @returns Returns an axios-get request, its errors are already catch-ed. You can .then off of it to do more with this function.
+  */
   const getReportedLink = (url) => {
     return axios
       .get("/api/reported-links", url ? { params: { link: url } } : {})
@@ -39,13 +58,13 @@ export default function Dashboard ({ currentUser }) {
       });
   };
 
-  // checks if the link provided has been reported before.
-  // if it has,
-  // grab the data, and see how many times its been reported, i.e, the length of userIDs.
-  // if it's 3 or greater...
-  //display a warning, along with the number of users who have reported the link
-  // they can still input it but it lets them know.
-  // if it has not, it doesn't need to do a thing!
+  /**
+   * @name handleClickOffInput
+   * This function is to be run when the user clicks off an input element. This specific handler sets reportWarning to true if more than 3 users have reported the link provided.
+   * @param inputValue - the current 'value' of the input element.
+   * @type {string}
+   * @returns Nothing.
+  */
   const handleClickOffInput = (inputValue) => {
     getReportedLink(inputValue).then((reportObj) => {
       if(reportObj) {
