@@ -164,7 +164,6 @@ app.post("/api/suggest-preferences", (req, res) => {
     });
 });
 
-// // endpoint allows user to update preferences and save new preference options in the database (WIP)
 app.patch("/api/update-preferences/:id", isLoggedIn, (req, res) => {
   const { id } = req.params
   const { preferences } = req.body

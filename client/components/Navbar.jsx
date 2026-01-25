@@ -1,6 +1,5 @@
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
@@ -22,15 +21,16 @@ function ResponsiveAppBar() {
     setAnchorElNav(null);
   };
 
+
   return (
-     <AppBar position="static">
+     <AppBar sx={{bgcolor: '#f49645ff'}} position="static">
       <Container maxWidth="large">
         <Toolbar disableGutters>
           <IconButton
             size="large"
             aria-label="open menu"
-            onClick={handleOpenNavMenu}
             color="inherit"
+            onClick={handleOpenNavMenu}
             sx={{mr: 1}}
           >
           <MenuIcon />

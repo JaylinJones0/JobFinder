@@ -77,7 +77,7 @@ export default function SuggestedJobList({ jobs, getJobListings, userPrefs }) {
 
   return (
     <>
-      <Container maxWidth="lg" sx={{ mt: 8 }}>
+      <Container maxWidth="lg" sx={{ mt: 8, bgcolor: '#FDFBFB'}}>
         {/* Zip code input */}
         <Box sx={{ justifyContent: "flex-end", display: "flex" }}>
           <Box
@@ -93,9 +93,9 @@ export default function SuggestedJobList({ jobs, getJobListings, userPrefs }) {
             </FormControl>
             <Button
               onClick={handleApplyChanges}
-              variant="contained"
+              variant="outlined"
               color="inherit"
-              sx={{ height: "50px" }}
+              sx={{ color: '#f49645ff', borderColor: '#f49645ff ', backgroundColor: '#FDFBFB', borderWidth: 2 }}
             >
               Apply Changes
             </Button>
@@ -134,7 +134,7 @@ export default function SuggestedJobList({ jobs, getJobListings, userPrefs }) {
           <Box
             sx={{ display: "flex", justifyContent: "center", mt: 2, gap: 2 }}
           >
-            <Button onClick={goToPreviousPage} disabled={currentPage === 1}>
+            <Button onClick={goToPreviousPage} disabled={currentPage === 1} sx={{ color: '#f49645ff'}}>
               Previous
             </Button>
             <Typography sx={{ display: "flex", alignItems: "center" }}>
@@ -143,6 +143,7 @@ export default function SuggestedJobList({ jobs, getJobListings, userPrefs }) {
             <Button
               onClick={goToNextPage}
               disabled={currentPage * JOBS_PER_PAGE >= jobs.length}
+              sx={{color: '#f49645ff'}}
             >
               Next
             </Button>
@@ -205,6 +206,7 @@ export default function SuggestedJobList({ jobs, getJobListings, userPrefs }) {
                       ml: "72px",
                       display: "flex",
                       justifyContent: "center",
+                      bgcolor: "#f49645ff"
                     }}
                     href={selectedJob.redirect_url}
                     target="_blank"
@@ -212,13 +214,14 @@ export default function SuggestedJobList({ jobs, getJobListings, userPrefs }) {
                     variant="contained"
                     color="primary"
                     size="large"
+
                   >
                     Apply To Job
                   </Button>
                 </Box>
                 <Box sx={{}}>
-                  {/* Ryan Adds onClick functionality to this button to save listing*/}
-                  <Button title="Click to save listing">
+                  {/*Adds onClick functionality to this button to save listing, STRETCH GOAL*/}
+                  <Button title="Click to save listing" sx={{bgcolor: "#f49645ff"}}>
                     <AddBox fontSize="large" />
                   </Button>
                 </Box>

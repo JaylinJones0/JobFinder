@@ -132,7 +132,7 @@ export default function Dashboard ({ currentUser }) {
   return (
     /*create job button */
     <Box>
-      <Button variant="contained" color="success" onClick={() => setDialog(true)}> CREATE JOB</Button>
+      <Button variant="outlined" sx={{ color: '#f49645ff', borderColor: '#f49645ff ', backgroundColor: '#FDFBFB' }} onClick={() => setDialog(true)}> CREATE JOB</Button>
     {/* create job dialog controlled by open state, onClose sets state to original state, clicking outside closes*/}
       <Dialog open={openDialog} onClose={() => setDialog(false)}>
         <DialogContent>
